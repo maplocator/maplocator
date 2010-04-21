@@ -1,0 +1,237 @@
+<!--
+This file contains code to check whether javascript and cookies are enabled/supported by the browser with the respective steps to enable.
+-->
+<html>
+  <head>
+    <title>India Bio-Diversity Portal</title>
+    <script type="text/javascript">
+      <!--
+      	function GetCookie() {
+      		var strName = "varCook";
+      		if (document.cookie.indexOf(strName) == -1) {
+         			//alert("Cookies are NOT enabled currently!\nPlease read below on this page for information on how to enable cookies.");
+              document.getElementById("divNoCookieMsg").style.display = "block";
+         			return false;
+      		} else {
+        		cookieStart = document.cookie.indexOf(strName);
+        		cookieValStart = (document.cookie.indexOf("=", cookieStart) + 1);
+        		cookieValEnd = document.cookie.indexOf(";", cookieStart);
+        		if (cookieValEnd == -1) {
+        			cookieValEnd = document.cookie.length;
+        		}
+        		cookieValue = document.cookie.substring(cookieValStart, cookieValEnd);
+      		}
+      		if (cookieValue = "True") {
+      			return ("True");
+      		}
+      	}
+
+      	function SetCookie(name,value,expires,path,domain,secure) {
+      		var strDNS = GetDNS();
+          document.cookie = name + "=" +escape(value) +
+            ( (expires) ? ";expires=" + expires.toGMTString() + 1000*60*20 : "") +
+            ( (path) ? ";path=" + path : "") +
+            //( (domain) ? ";domain=" + domain : "") +
+            ( (domain) ? ";domain=" + strDNS : "") +
+            ( (secure) ? ";secure" : "");
+          return true
+      	}
+
+      	function GetDNS() {
+      		cookieDomain = document.location.hostname;
+      	}
+
+        function CheckCookiesEnabled() {
+        	SetCookie('varCook','True','','/','','');
+        	if (GetCookie() == "True") {
+            //document.getElementById("divBrowserSettings").style.display = "none";
+        		//alert('Cookies are enabled!');
+            window.location = "index.php";
+        	} else {
+          	return false;
+          }
+        }
+      //-->
+    </script>
+  </head>
+  <body onload="javascript:CheckCookiesEnabled();">
+
+    <noscript>
+      <div>
+        <center>
+          <font color="red"><h3>Javascript is disabled on your browser.</h3></font>
+          Please read the instructions below to enable it.
+        </center>
+      </div>
+
+      <div>
+        <table cellspacing="0" cellpadding="1" border="1" bgcolor="white" align="center">
+          <tbody>
+            <tr>
+              <td><strong>Platform</strong></td>
+              <td colspan="2"><strong>Browser & Version</strong></td>
+              <td><strong>Find Javascript Settings in...</strong></td>
+              <td><strong>Find Cookie Settings in...</strong></td>
+            </tr>
+            <tr>
+              <td align="center" rowspan="5"><img height="38" width="38" border="0" alt="" src="browser_logos/windows_logo.gif"/><br/>Microsoft<br/>Windows</td>
+              <td align="center"><img height="31" width="29" border="0" alt="" src="browser_logos/Firefox_logo.png"/><br/>Firefox</td>
+              <td>2.x</td>
+              <td> Tools > Options > Content > Check Accept cookies from sites<br/></td>
+              <td> Tools > Options > Privacy > Check Accept cookies from sites<br/></td>
+            </tr>
+            <tr>
+              <td align="center"><img height="28" width="32" border="0" alt="" src="browser_logos/Opera_logo.gif"/><br/>Opera</td>
+              <td>9.x</td>
+              <td>Tools > Quick Preferences > Check Enable Javascript</td>
+              <td>Tools > Quick Preferences > Check Enable Cookies</td>
+            </tr>
+            <tr>
+              <td align="center"><img height="38" width="38" border="0" alt="" src="browser_logos/NetscapeNav_logo.gif"/><br/>Netscape<br/>Navigator</td>
+              <td>8.x</td>
+              <td>Tools > Options > Site Controls > Master Settings > Check I Trust This Site</td>
+              <td>Tools > Options > Site Controls > Master Settings > Check I Trust This Site</td>
+            </tr>
+            <tr>
+              <td align="center"><img height="35" width="43" border="0" alt="" src="browser_logos/mozilla_logo.gif"/><br/>Mozilla</td>
+              <td>1.7.x</td>
+              <td>Edit > Preferences > Advanced > Scripts & Plugins ...<br/>... Enable Javascript > for Navigator</td>
+              <td>Edit > Preferences > Privacy & Security > Cookies > Allow Cookies for the originating website only  </td>
+            </tr>
+            <tr>
+              <td align="center"><img height="38" width="38" border="0" alt="" src="browser_logos/Internet_Explorer_logo.gif"/><br/>Internet<br/>Explorer</td>
+              <td>7.x/ 8.x</td>
+              <td>Tools > Internet Options > Security > Custom Levels > Scripting > Active Scripting > Enable</td>
+              <td>Tools > Internet Options > Privacy > Sites > In "Address of website", enter the baseurl(http://www.example.com) of website and click "Allow"</td>
+            </tr>
+            <tr>
+              <td colspan="6"><a name="mac"/><br/><br/></td>
+            </tr>
+            <tr>
+              <td align="center" rowspan="3"><img height="42" width="40" border="0" alt="" src="browser_logos/Mac_Os_logo.gif"/><br/>MacOS</td>
+              <td align="center"><img height="33" width="32" border="0" alt="" src="browser_logos/Safari_Logo.gif"/><br/>Safari</td>
+              <td>2.x</td>
+              <td> Safari > Preferences > Security > Enable Javascript</td>
+              <td>Safari > Preferences > Security > Accept Cookies > Only from sites you navigate to</td>
+            </tr>
+            <tr>
+              <td align="center"><img height="31" width="29" border="0" alt="" src="browser_logos/Firefox_logo.png"/><br/>Firefox</td>
+              <td>2.x</td>
+              <td>Firefox > Preferences > Content > Check Enable Javascript</td>
+              <td>Firefox > Preferences > Privacy > Check Accept Cookies</td>
+            </tr>
+            <tr>
+              <td align="center"><img height="28" width="32" border="0" alt="" src="browser_logos/Opera_logo.gif"/><br/>Opera</td>
+              <td>9.x</td>
+              <td>Opera > Quick Preferences > Check Enable Javascript</td>
+              <td>Opera > Quick Preferences > Check Enable Cookies</td>
+            </tr>
+            <tr>
+              <td colspan="6"><a name="Ubuntu"/><br/><br/></td>
+            </tr>
+            <tr>
+              <td align="center" rowspan="3"><img height="42" width="45" border="0" alt="" src="browser_logos/Ubuntu_Logo.gif"/><br/>Ubuntu<br/>Linux</td>
+              <td align="center"><img height="31" width="29" border="0" alt="" src="browser_logos/Firefox_logo.png"/><br/>Firefox</td>
+              <td>1.x</td>
+              <td>Edit > Preferences > Content > Enable Javascript</td>
+              <td>Edit > Preferences > Privacy > Cookies > Allow sites to set cookies<br/></td>
+            </tr>
+            <tr>
+              <td align="center"><img height="28" width="32" border="0" alt="" src="browser_logos/Opera_logo.gif"/><br/>Opera</td>
+              <td>9.x</td>
+              <td>Tools > Quick Preferences > Check Enable Javascript</td>
+              <td>Tools > Quick Preferences > Check Enable Cookies</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </noscript>
+    <div id="divNoCookieMsg" style="display:none">
+      <center>
+        <font color="red"><h3>Cookies are disabled on your browser.</h3></font>
+        Please read the instructions below to enable it.
+      </center>
+      <div id="divBrowserSettings" style="display:block">
+        <table cellspacing="0" cellpadding="1" border="1" bgcolor="white" align="center">
+          <tbody>
+            <tr>
+              <td><strong>Platform</strong></td>
+              <td colspan="2"><strong>Browser & Version</strong></td>
+              <td><strong>Find Javascript Settings in...</strong></td>
+              <td><strong>Find Cookie Settings in...</strong></td>
+            </tr>
+            <tr>
+              <td align="center" rowspan="5"><img height="38" width="38" border="0" alt="" src="browser_logos/windows_logo.gif"/><br/>Microsoft<br/>Windows</td>
+              <td align="center"><img height="31" width="29" border="0" alt="" src="browser_logos/Firefox_logo.png"/><br/>Firefox</td>
+              <td>2.x</td>
+              <td> Tools > Options > Content > Check Accept cookies from sites<br/></td>
+              <td> Tools > Options > Privacy > Check Accept cookies from sites<br/></td>
+            </tr>
+            <tr>
+              <td align="center"><img height="28" width="32" border="0" alt="" src="browser_logos/Opera_logo.gif"/><br/>Opera</td>
+              <td>9.x</td>
+              <td>Tools > Quick Preferences > Check Enable Javascript</td>
+              <td>Tools > Quick Preferences > Check Enable Cookies</td>
+            </tr>
+            <tr>
+              <td align="center"><img height="38" width="38" border="0" alt="" src="browser_logos/NetscapeNav_logo.gif"/><br/>Netscape<br/>Navigator</td>
+              <td>8.x</td>
+              <td>Tools > Options > Site Controls > Master Settings > Check I Trust This Site</td>
+              <td>Tools > Options > Site Controls > Master Settings > Check I Trust This Site</td>
+            </tr>
+            <tr>
+              <td align="center"><img height="35" width="43" border="0" alt="" src="browser_logos/mozilla_logo.gif"/><br/>Mozilla</td>
+              <td>1.7.x</td>
+              <td>Edit > Preferences > Advanced > Scripts & Plugins ...<br/>... Enable Javascript > for Navigator</td>
+              <td>Edit > Preferences > Privacy & Security > Cookies > Allow Cookies for the originating website only  </td>
+            </tr>
+            <tr>
+              <td align="center"><img height="38" width="38" border="0" alt="" src="browser_logos/Internet_Explorer_logo.gif"/><br/>Internet<br/>Explorer</td>
+              <td>7.x/ 8.x</td>
+              <td>Tools > Internet Options > Security > Custom Levels > Scripting > Active Scripting > Enable</td>
+              <td>Tools > Internet Options > Privacy > Sites > In "Address of website", enter the baseurl(http://www.example.com) of website and click "Allow"</td>
+            </tr>
+            <tr>
+              <td colspan="6"><a name="mac"/><br/><br/></td>
+            </tr>
+            <tr>
+              <td align="center" rowspan="3"><img height="42" width="40" border="0" alt="" src="browser_logos/Mac_Os_logo.gif"/><br/>MacOS</td>
+              <td align="center"><img height="33" width="32" border="0" alt="" src="browser_logos/Safari_Logo.gif"/><br/>Safari</td>
+              <td>2.x</td>
+              <td> Safari > Preferences > Security > Enable Javascript</td>
+              <td>Safari > Preferences > Security > Accept Cookies > Only from sites you navigate to</td>
+            </tr>
+            <tr>
+              <td align="center"><img height="31" width="29" border="0" alt="" src="browser_logos/Firefox_logo.png"/><br/>Firefox</td>
+              <td>2.x</td>
+              <td>Firefox > Preferences > Content > Check Enable Javascript</td>
+              <td>Firefox > Preferences > Privacy > Check Accept Cookies</td>
+            </tr>
+            <tr>
+              <td align="center"><img height="28" width="32" border="0" alt="" src="browser_logos/Opera_logo.gif"/><br/>Opera</td>
+              <td>9.x</td>
+              <td>Opera > Quick Preferences > Check Enable Javascript</td>
+              <td>Opera > Quick Preferences > Check Enable Cookies</td>
+            </tr>
+            <tr>
+              <td colspan="6"><a name="Ubuntu"/><br/><br/></td>
+            </tr>
+            <tr>
+              <td align="center" rowspan="3"><img height="42" width="45" border="0" alt="" src="browser_logos/Ubuntu_Logo.gif"/><br/>Ubuntu<br/>Linux</td>
+              <td align="center"><img height="31" width="29" border="0" alt="" src="browser_logos/Firefox_logo.png"/><br/>Firefox</td>
+              <td>1.x</td>
+              <td>Edit > Preferences > Content > Enable Javascript</td>
+              <td>Edit > Preferences > Privacy > Cookies > Allow sites to set cookies<br/></td>
+            </tr>
+            <tr>
+              <td align="center"><img height="28" width="32" border="0" alt="" src="browser_logos/Opera_logo.gif"/><br/>Opera</td>
+              <td>9.x</td>
+              <td>Tools > Quick Preferences > Check Enable Javascript</td>
+              <td>Tools > Quick Preferences > Check Enable Cookies</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

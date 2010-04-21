@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index>
+	<title>Source of MultiLayerSearch</title>
+	<nodes>
+		<node label="html-template">
+			<node label="history">
+				<node label="history.css" icon="cssIcon" url="source/html-template/history/history.css.html"/>
+				<node label="history.js" url="source/html-template/history/history.js.txt"/>
+				<node label="historyFrame.html" icon="htmlIcon" url="source/html-template/history/historyFrame.html"/>
+			</node>
+			<node label="AC_OETags.js" url="source/html-template/AC_OETags.js.txt"/>
+			<node label="index.template.html" icon="htmlIcon" url="source/html-template/index.template.html"/>
+			<node label="playerProductInstall.swf" icon="swfIcon" url="source/html-template/playerProductInstall.swf"/>
+		</node>
+		<node label="libs">
+		</node>
+		<node label="src" icon="classpathIcon" expanded="true">
+			<node label="assets">
+				<node label="images">
+					<node label="closed_hand.png" icon="imageIcon" url="source/assets/images/closed_hand.png.html"/>
+					<node label="open_hand.png" icon="imageIcon" url="source/assets/images/open_hand.png.html"/>
+					<node label="scroll_grabber.png" icon="imageIcon" url="source/assets/images/scroll_grabber.png.html"/>
+					<node label="Thumbs.db" url="source/assets/images/Thumbs.db"/>
+				</node>
+			</node>
+			<node label="bridge" icon="packageIcon" expanded="true">
+				<node label="FABridge.as" icon="actionScriptIcon" url="source/bridge/FABridge.as.html"/>
+			</node>
+			<node label="components" icon="packageIcon" expanded="true">
+				<node label="Charts.as" icon="actionScriptIcon" url="source/components/Charts.as.html"/>
+				<node label="Charts_Panel.as" icon="actionScriptIcon" url="source/components/Charts_Panel.as.html"/>
+			</node>
+			<node label="images">
+				<node label="bar.jpg" icon="imageIcon" url="source/images/bar.jpg.html"/>
+				<node label="col.jpg" icon="imageIcon" url="source/images/col.jpg.html"/>
+				<node label="map.jpg" icon="imageIcon" url="source/images/map.jpg.html"/>
+				<node label="pie.jpg" icon="imageIcon" url="source/images/pie.jpg.html"/>
+				<node label="table.jpg" icon="imageIcon" url="source/images/table.jpg.html"/>
+			</node>
+			<node selected="true" label="MultiLayerSearch.mxml" icon="mxmlAppIcon" url="source/MultiLayerSearch.mxml.html"/>
+			<node label="SearchOutput.mxml" icon="mxmlIcon" url="source/SearchOutput.mxml.html"/>
+		</node>
+		<node label="MultiLayerSearch.zip" url="source/MultiLayerSearch.zip"/>
+	</nodes>
+</index>

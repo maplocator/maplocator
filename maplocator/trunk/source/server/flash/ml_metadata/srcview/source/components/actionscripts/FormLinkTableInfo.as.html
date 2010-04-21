@@ -1,0 +1,35 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>FormLinkTableInfo.as</title>
+<link rel="stylesheet" type="text/css" href="../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">mx</span>.<span class="ActionScriptDefault_Text">events</span>.<span class="ActionScriptDefault_Text">IndexChangedEvent</span>;
+
+<span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">init</span><span class="ActionScriptBracket/Brace">()</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">cmpFormMetaLink</span>.<span class="ActionScriptDefault_Text">init</span><span class="ActionScriptBracket/Brace">()</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">tabChanged</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">e</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">IndexChangedEvent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">switch</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">tabNavi</span>.<span class="ActionScriptDefault_Text">selectedChild</span>.<span class="ActionScriptDefault_Text">id</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">case</span> <span class="ActionScriptString">&apos;tabFormMetaLink&apos;</span><span class="ActionScriptOperator">:</span>
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(!</span><span class="ActionScriptDefault_Text">cmpFormMetaLink</span>.<span class="ActionScriptDefault_Text">dataFetched</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptDefault_Text">cmpFormMetaLink</span>.<span class="ActionScriptDefault_Text">init</span><span class="ActionScriptBracket/Brace">()</span>;
+        <span class="ActionScriptReserved">break</span>;
+        <span class="ActionScriptReserved">case</span> <span class="ActionScriptString">&apos;tabFormLinkColumnDesc&apos;</span><span class="ActionScriptOperator">:</span>
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(!</span><span class="ActionScriptDefault_Text">cmpFormLinkColumnDesc</span>.<span class="ActionScriptDefault_Text">dataFetched</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptDefault_Text">cmpFormLinkColumnDesc</span>.<span class="ActionScriptDefault_Text">init</span><span class="ActionScriptBracket/Brace">()</span>;
+        <span class="ActionScriptReserved">break</span>;
+        <span class="ActionScriptReserved">case</span> <span class="ActionScriptString">&apos;tabFormGlobalResourceMapping&apos;</span><span class="ActionScriptOperator">:</span>
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(!</span><span class="ActionScriptDefault_Text">cmpFormGlobalResourceMapping</span>.<span class="ActionScriptDefault_Text">dataFetched</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptDefault_Text">cmpFormGlobalResourceMapping</span>.<span class="ActionScriptDefault_Text">init</span><span class="ActionScriptBracket/Brace">()</span>;
+        <span class="ActionScriptReserved">break</span>;
+        <span class="ActionScriptReserved">default</span><span class="ActionScriptOperator">:</span>
+        <span class="ActionScriptReserved">break</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

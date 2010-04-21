@@ -1,0 +1,210 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>common.as</title>
+<link rel="stylesheet" type="text/css" href="../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptComment">// ActionScript file
+</span><span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">mx</span>.<span class="ActionScriptDefault_Text">containers</span>.<span class="ActionScriptDefault_Text">FormItem</span>;
+<span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">mx</span>.<span class="ActionScriptDefault_Text">controls</span>.<span class="ActionScriptOperator">*</span>;
+<span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">mx</span>.<span class="ActionScriptDefault_Text">core</span>.<span class="ActionScriptDefault_Text">IFlexDisplayObject</span>;
+<span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">mx</span>.<span class="ActionScriptDefault_Text">rpc</span>.<span class="ActionScriptDefault_Text">events</span>.<span class="ActionScriptDefault_Text">FaultEvent</span>;
+<span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">mx</span>.<span class="ActionScriptDefault_Text">rpc</span>.<span class="ActionScriptDefault_Text">events</span>.<span class="ActionScriptDefault_Text">ResultEvent</span>;
+<span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">mx</span>.<span class="ActionScriptDefault_Text">rpc</span>.<span class="ActionScriptDefault_Text">http</span>.<span class="ActionScriptDefault_Text">HTTPService</span>;
+
+<span class="ActionScriptComment">//[Bindable]
+</span><span class="ActionScriptComment">//public var layer_tablename:String = &apos;lyr_196_india_birdlocations&apos;;
+</span><span class="ActionScriptComment">//public var layer_tablename:String = &apos;lyr_213_india_papoints&apos;;
+</span><span class="ActionScriptComment">//public var layer_tablename:String = &apos;lyr_78_india_birdlocations&apos;;
+</span>
+<span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Bindable</span><span class="ActionScriptBracket/Brace">]</span>
+<span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">auto_columns_prefix</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">&quot;__mlocate__&quot;</span>;
+
+<span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Bindable</span><span class="ActionScriptBracket/Brace">]</span>
+<span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">srvr_url</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">&quot;../&quot;</span>;
+<span class="ActionScriptComment">//public var srvr_url:String = &quot;http://localhost/IBP/&quot;;
+</span><span class="ActionScriptComment">//public var srvr_url:String = &quot;http://125.18.107.200/IBP/&quot;;
+</span>
+<span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Bindable</span><span class="ActionScriptBracket/Brace">]</span>
+<span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">metadata_file</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">&quot;metadata.php&quot;</span>;
+
+<span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Bindable</span><span class="ActionScriptBracket/Brace">]</span>
+<span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">ml_data_file</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">&quot;ml_data.php&quot;</span>;
+
+<span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Bindable</span><span class="ActionScriptBracket/Brace">]</span>
+<span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">themes_file</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">&quot;themes.php&quot;</span>;
+
+<span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Bindable</span><span class="ActionScriptBracket/Brace">]</span>
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">service</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">HTTPService</span>; 
+
+<span class="ActionScriptComment">//Security.loadPolicyFile(&quot;http://125.18.107.200/IBP/crossdomain.xml&quot;);
+</span>
+<span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Bindable</span><span class="ActionScriptBracket/Brace">]</span>
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">waitPopup</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">IFlexDisplayObject</span>;
+
+<span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">useHttpService</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">url</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span>, <span class="ActionScriptDefault_Text">method</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span>, <span class="ActionScriptDefault_Text">parameters</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Object</span>, <span class="ActionScriptDefault_Text">resultFormat</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span>, <span class="ActionScriptDefault_Text">resultHandler</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Function</span>, <span class="ActionScriptDefault_Text">faultHandler</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Function</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">service</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">HTTPService</span><span class="ActionScriptBracket/Brace">()</span>;
+    <span class="ActionScriptDefault_Text">service</span>.<span class="ActionScriptDefault_Text">useProxy</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+    <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">resultFormat</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptDefault_Text">service</span>.<span class="ActionScriptDefault_Text">resultFormat</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">resultFormat</span>;
+       <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptDefault_Text">service</span>.<span class="ActionScriptDefault_Text">url</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">url</span>;
+    <span class="ActionScriptDefault_Text">service</span>.<span class="ActionScriptDefault_Text">method</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">method</span>;
+    <span class="ActionScriptDefault_Text">service</span>.<span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">ResultEvent</span>.<span class="ActionScriptDefault_Text">RESULT</span>, <span class="ActionScriptDefault_Text">resultHandler</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptDefault_Text">service</span>.<span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">FaultEvent</span>.<span class="ActionScriptDefault_Text">FAULT</span>, <span class="ActionScriptDefault_Text">faultHandler</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptDefault_Text">service</span>.<span class="ActionScriptDefault_Text">send</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">parameters</span><span class="ActionScriptBracket/Brace">)</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">getFormItem_Text</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">lbl</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span>, <span class="ActionScriptDefault_Text">val</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">FormItem</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">frmitm</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">FormItem</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">FormItem</span><span class="ActionScriptBracket/Brace">()</span>;
+    <span class="ActionScriptDefault_Text">frmitm</span>.<span class="ActionScriptDefault_Text">label</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">lbl</span>;
+    
+    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">txtBx</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">TextInput</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">TextInput</span><span class="ActionScriptBracket/Brace">()</span>;
+    <span class="ActionScriptDefault_Text">txtBx</span>.<span class="ActionScriptDefault_Text">id</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">&apos;edit-&apos;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">lbl</span>;
+    <span class="ActionScriptDefault_Text">txtBx</span>.<span class="ActionScriptDefault_Text">name</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">&apos;edit-&apos;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">lbl</span>;
+    <span class="ActionScriptDefault_Text">txtBx</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">val</span>;
+    
+    <span class="ActionScriptDefault_Text">frmitm</span>.<span class="ActionScriptDefault_Text">addChild</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">txtBx</span><span class="ActionScriptBracket/Brace">)</span>;
+    
+    <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">frmitm</span>;
+<span class="ActionScriptBracket/Brace">}</span> 
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">setCBSelectedItem</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">cmbBx</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">ComboBox</span>, <span class="ActionScriptDefault_Text">_selectedValue</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">cmbBx</span>.<span class="ActionScriptDefault_Text">dataProvider</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptComment">// Loop through dataProvider 
+</span>        <span class="ActionScriptReserved">for</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">int</span><span class="ActionScriptOperator">=</span>0; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">&lt;</span><span class="ActionScriptDefault_Text">cmbBx</span>.<span class="ActionScriptDefault_Text">dataProvider</span>.<span class="ActionScriptDefault_Text">length</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// Get this item&apos;s data 
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">item</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">cmbBx</span>.<span class="ActionScriptDefault_Text">dataProvider</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>.<span class="ActionScriptDefault_Text">data</span>;
+             
+            <span class="ActionScriptComment">// Check if is selectedValue 
+</span>            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">item</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptDefault_Text">_selectedValue</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptComment">// Yes, set selectedIndex 
+</span>                <span class="ActionScriptDefault_Text">cmbBx</span>.<span class="ActionScriptDefault_Text">selectedIndex</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">i</span>;
+                <span class="ActionScriptReserved">break</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">setListSelectedItems</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">lst</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">List</span>, <span class="ActionScriptDefault_Text">vals</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">lst</span>.<span class="ActionScriptDefault_Text">dataProvider</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">arr_vals</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vals</span>.<span class="ActionScriptDefault_Text">split</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">&quot;,&quot;</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">lstSelectedIndices</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">()</span>;
+        <span class="ActionScriptComment">// Loop through dataProvider 
+</span>        <span class="ActionScriptReserved">for</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">int</span><span class="ActionScriptOperator">=</span>0; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">&lt;</span><span class="ActionScriptDefault_Text">lst</span>.<span class="ActionScriptDefault_Text">dataProvider</span>.<span class="ActionScriptDefault_Text">length</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// Get this item&apos;s data 
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">item</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">lst</span>.<span class="ActionScriptDefault_Text">dataProvider</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>.<span class="ActionScriptDefault_Text">data</span>;
+
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">arr_vals</span>.<span class="ActionScriptDefault_Text">indexOf</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">item</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptOperator">-</span>1<span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">lstSelectedIndices</span>.<span class="ActionScriptDefault_Text">push</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptDefault_Text">lst</span>.<span class="ActionScriptDefault_Text">selectedIndices</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">lstSelectedIndices</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">initSpecifiedColumns</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">lst</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">List</span>, <span class="ActionScriptDefault_Text">txtBx</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">TextInput</span>, <span class="ActionScriptDefault_Text">val</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">val</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptDefault_Text">val</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">&apos;&apos;</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptDefault_Text">txtBx</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">val</span>;
+    <span class="ActionScriptDefault_Text">setListSelectedItems</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">lst</span>, <span class="ActionScriptDefault_Text">removeSingleQuotes</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">val</span><span class="ActionScriptBracket/Brace">))</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">updateSelectedColumnsList</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">lst</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">List</span>, <span class="ActionScriptDefault_Text">txtIp</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">TextInput</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptComment">// For ref: current clicked item can be passed using &quot;List(event.target).selectedItem&quot;
+</span>    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">str</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">&apos;&apos;</span>;
+    <span class="ActionScriptReserved">for</span> <span class="ActionScriptReserved">each</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">obj</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Object</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">lst</span>.<span class="ActionScriptDefault_Text">selectedItems</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">obj</span>.<span class="ActionScriptDefault_Text">data</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptReserved">null</span> <span class="ActionScriptOperator">||</span> <span class="ActionScriptDefault_Text">obj</span>.<span class="ActionScriptDefault_Text">data</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptString">&apos;&apos;</span><span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">initSpecifiedColumns</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">lst</span>, <span class="ActionScriptDefault_Text">txtIp</span>, <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">return</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptDefault_Text">str</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;&apos;&quot;</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">obj</span>.<span class="ActionScriptDefault_Text">data</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptString">&quot;&apos;,&quot;</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">str</span>.<span class="ActionScriptDefault_Text">length</span> <span class="ActionScriptOperator">&gt;</span> 0<span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptDefault_Text">str</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">str</span>.<span class="ActionScriptDefault_Text">substr</span><span class="ActionScriptBracket/Brace">(</span>0, <span class="ActionScriptDefault_Text">str</span>.<span class="ActionScriptDefault_Text">length</span><span class="ActionScriptOperator">-</span>1<span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptDefault_Text">txtIp</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">str</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">isFilterableChanged</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">frmItmFilterColumns</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">FormItem</span>, <span class="ActionScriptDefault_Text">chkBx</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">CheckBox</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">chkBx</span>.<span class="ActionScriptDefault_Text">selected</span><span class="ActionScriptBracket/Brace">)</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptDefault_Text">frmItmFilterColumns</span>.<span class="ActionScriptDefault_Text">visible</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+        <span class="ActionScriptDefault_Text">frmItmFilterColumns</span>.<span class="ActionScriptDefault_Text">includeInLayout</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptReserved">else</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptDefault_Text">frmItmFilterColumns</span>.<span class="ActionScriptDefault_Text">visible</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+        <span class="ActionScriptDefault_Text">frmItmFilterColumns</span>.<span class="ActionScriptDefault_Text">includeInLayout</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">getColumnsArray</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">str_cols</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Array</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">str_cols</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">removeSingleQuotes</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">str_cols</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">table_columns</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptBracket/Brace">[]</span>;
+    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">col</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span>;
+    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">objCol</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Object</span>;
+    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">arr_columns</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">str_cols</span>.<span class="ActionScriptDefault_Text">split</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">&quot;,&quot;</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptReserved">for</span> <span class="ActionScriptReserved">each</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">col</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">arr_columns</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">col</span>.<span class="ActionScriptDefault_Text">substr</span><span class="ActionScriptBracket/Brace">(</span>0, <span class="ActionScriptDefault_Text">auto_columns_prefix</span>.<span class="ActionScriptDefault_Text">length</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptDefault_Text">auto_columns_prefix</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">objCol</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Object</span><span class="ActionScriptBracket/Brace">()</span>;
+            <span class="ActionScriptDefault_Text">objCol</span>.<span class="ActionScriptDefault_Text">label</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">col</span>;
+            <span class="ActionScriptDefault_Text">objCol</span>.<span class="ActionScriptDefault_Text">data</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">col</span>;
+            <span class="ActionScriptDefault_Text">table_columns</span>.<span class="ActionScriptDefault_Text">push</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">objCol</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">table_columns</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">getNodeValue</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">obj</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Object</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">return</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">obj</span>.<span class="ActionScriptDefault_Text">value</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">?</span> <span class="ActionScriptDefault_Text">obj</span>.<span class="ActionScriptDefault_Text">value</span> <span class="ActionScriptOperator">:</span> <span class="ActionScriptString">&apos;&apos;</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">BlockUI</span><span class="ActionScriptBracket/Brace">()</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptComment">//waitPopup = PopUpManager.createPopUp(this, WaitScreen, true);
+</span><span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">UnblockUI</span><span class="ActionScriptBracket/Brace">()</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptComment">//PopUpManager.removePopUp(waitPopup);
+</span><span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">chkError</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">e</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">ResultEvent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">e</span>.<span class="ActionScriptDefault_Text">result</span>.<span class="ActionScriptDefault_Text">b</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptDefault_Text">Alert</span>.<span class="ActionScriptDefault_Text">show</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">&quot;Server error.&quot;</span>, <span class="ActionScriptString">&quot;Error&quot;</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">true</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">response</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Object</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">e</span>.<span class="ActionScriptDefault_Text">result</span>.<span class="ActionScriptDefault_Text">response</span>;
+    <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">response</span>.<span class="ActionScriptDefault_Text">error</span>.<span class="ActionScriptDefault_Text">value</span> <span class="ActionScriptOperator">==</span> 1<span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptDefault_Text">Alert</span>.<span class="ActionScriptDefault_Text">show</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">response</span>.<span class="ActionScriptDefault_Text">error</span>.<span class="ActionScriptDefault_Text">msg</span>, <span class="ActionScriptString">&quot;Error&quot;</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">true</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">false</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">removeSingleQuotes</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">str</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">str</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptReserved">null</span> <span class="ActionScriptOperator">||</span> <span class="ActionScriptDefault_Text">str</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptString">&apos;&apos;</span><span class="ActionScriptBracket/Brace">)</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">return</span> <span class="ActionScriptString">&apos;&apos;</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptReserved">else</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">str</span>.<span class="ActionScriptDefault_Text">replace</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">/</span><span class="ActionScriptString">&apos;/g, &quot;&quot;); 
+    }
+}
+</span></pre></body>
+</html>

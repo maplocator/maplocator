@@ -1,0 +1,6 @@
+METADATA
+       "wfs_title" "Factbook Metadata"
+       "gml_include_items" "all"
+       "wms_feature_info_mime_type" "text/html"
+END
+template "template.html"

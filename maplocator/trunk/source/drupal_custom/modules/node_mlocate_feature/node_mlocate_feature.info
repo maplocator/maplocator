@@ -1,0 +1,6 @@
+;Information about node_mlocate_feature module
+; $Id$
+name = node_mlocate_feature
+description = Provides node for MLOCATE.
+package = MLOCATE
+core = 6.x

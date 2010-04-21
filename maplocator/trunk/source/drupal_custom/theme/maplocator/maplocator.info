@@ -1,0 +1,48 @@
+;Information about customized drupal theme "maplocator"
+
+; $Id: maplocator.info,v 1.5 2007/07/01 23:27:32 goba Exp $
+name = maplocator
+description = Tableless
+version = VERSION
+core = 6.x
+engine = phptemplate
+
+scripts[] = scripts/maplayout.js
+scripts[] = scripts/functions.js
+scripts[] = scripts/thirdparty/AC_OETags.js
+scripts[] = scripts/thirdparty/FABridge.js
+scripts[] = scripts/thirdparty/AC_OETags.js
+scripts[] = scripts/thirdparty/FABridge.js
+scripts[] = scripts/thirdparty/jquery.dimensions.js
+scripts[] = scripts/thirdparty/jquery.wresize.js
+scripts[] = scripts/thirdparty/jquery-ui.js
+scripts[] = scripts/thirdparty/ui.datepicker.js
+scripts[] = scripts/thirdparty/ui.resizeable.js
+scripts[] = scripts/thirdparty/jquery.cookie.js
+scripts[] = scripts/thirdparty/jquery.blockUI.js
+scripts[] = scripts/thirdparty/jquery.maskedinput.js
+scripts[] = scripts/thirdparty/jquery.expander.js
+scripts[] = scripts/thirdparty/jquery-linkize.js
+
+
+; Custom regions
+regions[home_left] = Home Left
+regions[home_right] = Home Right
+regions[profile] = Profile
+regions[nav] = Navigation
+regions[main_menu] = Main Menu
+regions[user_login] = User Login
+regions[blurb] = Blurb
+regions[content] = Content
+regions[map_area] = Map Area
+regions[community] = Community
+regions[content_menu] = Content Menu
+regions[map_search] = Map Search
+regions[data] = Data
+regions[footer] = Footer
+
+
+; Information added by drupal.org packaging script on 2008-04-09
+version = "6.2"
+project = "drupal"
+datestamp = "1207776008"

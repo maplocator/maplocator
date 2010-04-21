@@ -1,0 +1,6 @@
+;Information about node_mlocate_layerinfo module
+; $Id$
+name = node_mlocate_layerinfo
+description = Provides node for MLOCATE layerinfo.
+package = MLOCATE
+core = 6.x

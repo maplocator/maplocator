@@ -1,0 +1,95 @@
+<?php
+/*
+All MapLocator code is Copyright 2010 by the original authors.
+
+This work is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or any
+later version.
+
+This work is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See version 3 of
+the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+Version 3 along with this program as the file LICENSE.txt; if not,
+please see http://www.gnu.org/licenses/gpl-3.0.html.
+
+*/
+
+/***
+*This the module file for customized drupal module "map" .
+*
+***/
+//$Id$
+
+/* map module
+*/
+function log_as_string($obj) {
+  ob_start();
+  var_dump($obj);
+  $a=ob_get_contents();
+  ob_end_clean();
+  error_log(" --> " . $a);
+}
+
+function map_perm() {
+  return array('administer map');
+}
+
+function map_block($op ='list',$delta=0) {
+  $module_path = drupal_get_path('module','map');
+  if(Drupal.jsEnabled) {
+    log_as_string('here');
+    //drupal_add_js($module_path.'/map.js');
+  }
+  else {
+    log_as_string('nothin to do');
+  }
+  switch($op) {
+    case 'list':
+      $block[0]["info"] = t("Map module");
+      return $block;
+
+    case 'view':
+      $global_vars = "<script>var user_access = false; </script>\n";
+      $return = menu_execute_active_handler("node/add/node-mlocate-feature/popup");
+      if (!is_int($return)) {
+        $global_vars .= "<script>user_access = true; </script>\n";
+      }
+      global $user;
+      $global_vars .= "<script>user_id = ".$user->uid.";\nvar user_name = '".$user->name."';\nvar user_mail = '".$user->mail."';\nvar user_roles_ser = '".serialize($user->roles)."';</script>";
+
+
+      $loadcss = "<link href='".base_path()."{$module_path}/thirdparty/jquery-ui/jquery-ui-resizeable.css' media='all' rel='stylesheet' type='text/css'>";
+      $loadcss .= "<link href='".base_path()."{$module_path}/css/openlayers_panel.css' media='all' rel='stylesheet' type='text/css'>";
+      $loadscript="<script language='javascript'> var base_path = Drupal.settings.basePath; var module_path = '{$module_path}';</script>\n";
+      $loadscript.="<script src='".base_path()."{$module_path}/functions.js'></script>\n";
+      $loadscript.="<script src='".base_path()."{$module_path}/includemap.js'></script>\n";
+      $loadscript.="<script defer='defer' src='".base_path()."{$module_path}/map.js'></script>\n";
+      $loadscript.="<script src='".base_path()."{$module_path}/symbology.js'></script>\n";
+      $loadscript.="<script src='".base_path()."{$module_path}/thirdparty/slider/slider.js'></script>\n";
+      $loadcss .= "<link href='".base_path()."{$module_path}/thirdparty/slider/slider.css' media='all' rel='stylesheet' type='text/css'>";
+      $loadscript.="<script src='".base_path()."{$module_path}/thirdparty/jscolor/jscolor.js'></script>\n";
+
+      $block_content = '';
+
+      $block_content.=$loadcss.$global_vars.$loadscript.$loadlayers;
+      if($block_content == '') {
+        return;
+      }
+      $block['subject'] = 'Map';
+      $block['content'] = $block_content;
+      return $block;
+  }
+}
+
+function map_user($op, &$edit, &$user, $category = NULL) {
+  if($op == "logout") {
+    setcookie ("layerOptions", 1);
+    setcookie ("layersChecked", "", time() - 3600);
+    setcookie ("themeTree1", "", time() - 3600);
+    setcookie ("themeTree2", "", time() - 3600);
+  }
+}

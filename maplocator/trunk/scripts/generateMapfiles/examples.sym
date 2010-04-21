@@ -1,0 +1,40 @@
+SYMBOLSET
+  #SYMBOL # standard circular brush
+  #  NAME 'circle'
+  #  TYPE ELLIPSE
+  #  POINTS 1 1 END
+  #  FILLED TRUE
+  #END
+
+  #SYMBOL # long dash pattern
+  #  NAME 'dash-long'
+  #  TYPE ELLIPSE
+  #  POINTS 1 1 END
+  #  FILLED TRUE
+  #  STYLE 16 16 END
+  #END
+
+  #SYMBOL # short dash pattern
+  #  NAME 'dash-short'
+  #  TYPE ELLIPSE
+  #  POINTS 1 1 END
+  #  FILLED TRUE
+  #  STYLE 8 8 END
+  #END
+
+  #SYMBOL # tracks
+  #  NAME 'tracks'
+  #  TYPE ELLIPSE
+  #  POINTS 1 1 END
+  #  FILLED TRUE
+  #  STYLE 1 16 END
+  #END
+
+  #SYMBOL # custom_icon
+  #  NAME 'custom_icon'
+  #  TYPE PIXMAP
+  #  #IMAGE "http://125.18.107.200/IBP/themeicon.php?theme=lyr_78_india_birdlocations&fill=817679"
+  #  IMAGE "proto.png"
+  #  TRANSPARENT 0 
+  #END
+END

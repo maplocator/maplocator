@@ -1,0 +1,533 @@
+/*
+All MapLocator code is Copyright 2010 by the original authors.
+
+This work is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or any
+later version.
+
+This work is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See version 3 of
+the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+Version 3 along with this program as the file LICENSE.txt; if not,
+please see http://www.gnu.org/licenses/gpl-3.0.html.
+
+*/
+
+body#mapPage {
+    background-color: #EBD593;
+    margin: 0;
+    font-family: Verdana, Helvetica, Sans-Serif;
+    font-size: 10pt;
+    color: #000000;
+}
+
+
+a img {
+    border: 0;
+}
+
+#mapPage a:link {
+    color: #000000;
+    text-decoration: underline;
+}
+
+#mapPage a:visited {
+    color: #000000;
+    text-decoration: underline;
+}
+
+#mapPage a:hover {
+    color: #EBBC00;
+    text-decoration: underline;
+}
+
+#mapPage a:active {
+    color: #EBBC00;
+    text-decoration: underline;
+}
+
+#mapPage #wrapper {
+    min-width: 1000px;
+    min-height: 500px;
+}
+
+#mapPage #tools {
+    background-color: #979797;
+    height: 98px;
+}
+
+#mapPage #mainToolBar .tool {
+    float: left;
+    margin: 10px 3px 0px 3px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#mapPage #mainToolBar .tool a:link {
+    display: block;
+    padding: 8px;
+    width: 80px;
+    height: 16px;
+    background-color: #EBD593;
+    /*background-image: url(../images/button-bg.png);*/
+    background-repeat: no-repeat;
+    text-align: center;
+    color: #5F5F5F;
+    text-decoration: none;
+}
+
+#mapPage #mainToolBar .tool a:visited {
+    display: block;
+    padding: 8px;
+    width: 80px;
+    background-color: #EBD593;
+    /*background-image: url(../images/button-bg.png);*/
+    background-repeat: no-repeat;
+    text-align: center;
+    color: #5F5F5F;
+    text-decoration: none;
+}
+
+#mapPage #mainToolBar .tool a:hover {
+    display: block;
+    padding: 8px;
+    width: 80px;
+    background-color: #EBBF3B;
+    /*background-image: url(../images/button-bg.png);*/
+    background-repeat: no-repeat;
+    text-align: center;
+    color: #5F5F5F;
+    text-decoration: none;
+}
+
+#mapPage #mainToolBar .tool a:active {
+    display: block;
+    padding: 8px;
+    width: 80px;
+    background-color: #EBD593;
+    /*background-image: url(../images/button-bg.png);*/
+    background-repeat: no-repeat;
+    text-align: center;
+    color: #5F5F5F;
+    text-decoration: none;
+}
+
+#mapPage #activeLayer {
+    font-weight: bold;
+    font-size: 10pt;
+    position: absolute;
+    top: 60px;
+    left: 205px;
+}
+
+#mapPage #activeLayer img {
+    margin: 0 2px 0 2px;
+}
+
+#mapPage #layerTools {
+    float: right;
+    margin: 10px 3px 0px 3px;
+}
+
+#mapPage #layerTools .tool {
+    float: left;
+    margin: 0 3px 0px 3px;
+    font-size:11px;
+    font-weight:bold;
+    width: 115px;
+}
+
+#mapPage #layerTools .tool a:link {
+    display: block;
+    padding: 7px;
+    text-align: center;
+    background-color:  #EBD593;
+    color: #5F5F5F;
+    text-decoration: none;
+}
+
+#mapPage #layerTools .tool a:visited {
+    display: block;
+    padding: 7px;
+    text-align: center;
+    background-color: #EBD593;
+    color: #5F5F5F;
+    text-decoration: none;
+}
+
+#mapPage #layerTools .tool a:hover {
+    display: block;
+    padding: 7px;
+    text-align: center;
+    background-color: #EBBC00;
+    color: #5F5F5F;
+    text-decoration: none;
+}
+
+#mapPage #layerTools .tool a:active {
+    display: block;
+    padding: 7px;
+    text-align: center;
+    background-color: #EBD593;
+    color: #5F5F5F;
+    text-decoration: none;
+}
+
+#mapPage #advanced {
+    float: right;
+    margin-top: 10px;
+    margin-right: 20px;
+    position: relative;
+    top: 0;
+    left: 0;
+    z-index: 2001;
+}
+
+#mapPage #advanced .tool {
+    background-color: #EBD593;
+    width: 100px;
+    font-size:11px;
+    font-weight:bold;
+    width: 110px;
+}
+
+#mapPage #advanced .tool a:link {
+    display: block;
+    padding: 7px;
+    text-align: center;
+    background-color: #EBD593;
+    color: #5F5F5F;
+    text-decoration: none;
+}
+
+#mapPage #advanced .tool a:visited {
+    display: block;
+    padding: 7px;
+    text-align: center;
+    background-color: #EBD593;
+    color: #5F5F5F;
+    text-decoration: none;
+}
+
+#mapPage #advanced .tool a:hover {
+    display: block;
+    padding: 7px;
+    text-align: center;
+    background-color: #EBBC00;
+    color: #5F5F5F;
+    text-decoration: none;
+}
+
+#mapPage #advanced .tool a:active {
+    display: block;
+    padding: 7px;
+    text-align: center;
+    background-color: #EBD593;
+    color: #5F5F5F;
+    text-decoration: none;
+}
+
+#mapPage #advanced .optional {
+    display: none;
+}
+
+#mapPage #mapBranding {
+    margin: 0;
+    display:inline;
+}
+
+#mapPage #logo {
+    margin: 5px;
+    margin-right: 10px;
+    float: left;
+}
+
+#mapPage #mapBranding #logo a .icon{
+    height:75px;
+    width:187px;
+    background-image: url(../images/map-logo.ico);
+    cursor: hand;
+    cursor: pointer;
+}
+
+#layerGroupType {
+    list-style: none;
+    font-size: 8pt;
+    margin: 0;
+    padding: 0;
+    width: 150px;
+    position: relative;
+    top: 2px;
+    left: 0;
+    z-index: 2501;
+}
+
+#layerGroupType li {
+    text-align: right;
+    padding: 5px;
+    margin: 2px;
+    border: 1px solid #EBBC00;
+    font-weight: bold;
+}
+
+
+#layerGroupType li {
+    border-right: 1px solid #fff;
+    background-color: #EBD593;
+}
+
+#layerGroupType li a:link, #layerGroupType li a:visited, #layerGroupType li a:hover, #layerGroupType li a:active {
+    color: #000000;
+    text-decoration: none;
+}
+
+#layerGroupType li.selected {
+    border-right: 1px solid #fff;
+    background-color: #fff;
+}
+
+#layerGroupType li.selected a:link, #layerGroupType li.selected a:visited, #layerGroupType li.selected a:hover, #layerGroupType li.selected a:active {
+    color: #000000;
+    text-decoration: none;
+}
+
+#layerTree {
+    border:1px solid #EBBC00;
+    font-size:11px;
+    height:265px;
+    left:147px;
+    overflow:auto;
+    padding:5px;
+    position:absolute;
+    top:21px;
+    width:428px;
+    z-index:2500;
+}
+
+/*
+.tool a .icon{
+	width: 32px;
+	height: 32px;
+}
+
+#layerSelect-1 .icon{
+	background-image: url(../images/icons/layers.png);
+}
+
+#layerOrder-1 .icon{
+	background-image: url(../images/icons/layer-ordering.png);
+}
+
+#resetTreeViewControl .icon{
+	background-image: url(../images/icons/reset.png);
+}
+
+#uploadData .icon{
+	background-image: url(../images/icons/upload.png);
+}
+
+#btn_contribute .icon{
+	background-image: url(../images/icons/contribute-icon.png);
+}
+
+#mapLegend-1 .icon{
+	background-image: url(../images/icons/legend-icon.png);
+}
+
+#anc_LayerInfo .icon{
+	background-image: url(../images/icons/info-icon.png);
+}
+
+#anc_LayerExtent .icon{
+	background-image: url(../images/icons/zoom-to-extent-icon.png);
+}
+
+#layerData-1 .icon{
+	background-image: url(../images/icons/layer-data.png);
+}
+
+#downloadLayer a .icon{
+	background-image: url(../images/icons/download.png);
+}
+
+#mapurl a .icon{
+	background-image: url(../images/icons/link-icon.png);
+}
+*/
+
+/*
+#login ul {
+  list-style-image:none;
+  list-style-position:outside;
+  list-style-type:none;
+  margin:0;
+  padding:0;
+}
+
+#login li {
+  border-right:1px solid #725F39;
+  float:left;
+  list-style-image:none;
+  list-style-position:outside;
+  list-style-type:none;
+  padding:2px 5px;
+}
+
+#login li.last {
+  border-right:medium none;
+}
+*/
+
+#mapPage .baseMap {
+    position: absolute;
+    top: 60px;
+    right:20px;
+}
+
+#mapPage .loginRegister {
+    position: absolute;
+    top: 60px;
+    right: 250px;
+    padding: 0px;
+}
+
+#mapPage #mapArea {
+    position: absolute;
+    top: 100px;
+    left: 0;
+    width: 1000px;
+    height: 200px;
+    background-color: #eee;
+}
+
+.mapPane {
+    background-color: #fff;
+    border: 1px solid #EBBC00;
+    width: 200px;
+    height: 200px;
+    z-index: 2000;
+    display: none;
+    position: absolute;
+}
+
+.mapPane h2 {
+    font-size: 10pt;
+    margin: 2px 0 0 20px;
+    padding: 0;
+}
+
+.mapPane .closePane {
+    position: absolute;
+    top: 4px;
+    right: 12px;
+}
+
+.mapPane .minimizeMaximizePane {
+    position: absolute;
+    top: 5px;
+    right: 30px;
+}
+
+.mapPane .displayPane {
+    overflow: auto;
+    margin: 20px 20px 20px 20px;
+}
+
+.mapPane .dragHandle {
+    background-image: url(../images/icons/draggable-bar.png);
+    background-repeat: no-repeat;
+    /*background-position: 2px 2px;*/
+    cursor: move;
+}
+
+.dragHandle {
+    margin-top: -2px;
+}
+
+#layerSelectPane {
+    width: 600px;
+    height: 310px;
+    top: 100px;
+    display: block;
+    /*left: 120px;*/
+    opacity: 0.75;
+    filter: Alpha(opacity=85);
+}
+
+#layerOrderPane {
+    width: 300px;
+    height: 400px;
+    top: 150px;
+    right: 20px;
+    z-index: -1;
+}
+
+#userLogin {
+    position: absolute;
+    top: 60px;
+    right:320px;
+    background-color: #fff;
+    z-index: 1111;
+    border: 1px solid #EBBC00;
+    padding: 30px;
+    display: none;
+}
+
+#loginClose {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+#messages {
+    position: absolute;
+    top: 60px;
+    right: 400px;
+    width: 300px;
+    background-color: #fff;
+    z-index: 2002;
+    border: 1px solid #EBBC00;
+    padding: 30px;
+    font-weight: bold;
+}
+
+#divMapUrl {
+    position: absolute;
+    top: 70px;
+    right: 215px;
+    background-color: #fff;
+    z-index: 1111;
+    border: 1px solid #EBBC00;
+    padding: 10px;
+    padding-top: 0px;
+    padding-right: 0px;
+    width: 600px;
+    display: none;
+    float:right;
+}
+
+#mapLegendPane {
+    width: 250px;
+    height: 400px;
+    top: 150px;
+    right: 20px;
+}
+
+#legend {
+    font-size: 8pt;
+    display: none;
+    height: 350px;
+    overflow: auto;
+}
+
+#layerDataPane {
+    width: 80%;
+    height: 30%;
+    bottom: 10px;
+    right: 10px;
+}
+

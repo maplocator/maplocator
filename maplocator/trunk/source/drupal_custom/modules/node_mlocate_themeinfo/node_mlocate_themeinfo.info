@@ -1,0 +1,6 @@
+;Information about node_mlocate_themeinfo module
+; $Id$
+name = node_mlocate_themeinfo
+description = Provides node for MLOCATE themeinfo.
+package = MLOCATE
+core = 6.x

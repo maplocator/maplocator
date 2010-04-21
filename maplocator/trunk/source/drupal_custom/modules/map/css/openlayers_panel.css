@@ -1,0 +1,111 @@
+/*
+All MapLocator code is Copyright 2010 by the original authors.
+
+This work is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or any
+later version.
+
+This work is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See version 3 of
+the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+Version 3 along with this program as the file LICENSE.txt; if not,
+please see http://www.gnu.org/licenses/gpl-3.0.html.
+
+*/
+
+/***
+*This css file over-rides the openLayers classes related to map panel in order to customize for map locator.
+*
+***/
+.olControlPanel{
+  left: 67px;
+  top: 21px;
+}
+
+.olControlPanel div {
+  display: block;
+  width: 24px;
+  height: 22px;
+  margin: 3px;
+  background-color: red;
+  float: left;
+}
+
+.olControlPanel .olControlMouseDefaultsItemActive {
+  background-color: blue;
+  background-image: url("../images/pan_on.png");
+  background-repeat:no-repeat;
+}
+
+.olControlPanel .olControlMouseDefaultsItemInactive {
+  background-color: orange;
+  background-image: url("../images/pan_off.png");
+  background-repeat:no-repeat;
+}
+
+.olControlPanel .olControlZoomBoxItemInactive {
+  background-color: orange;
+  background-image: url("../images/zoom_off.png");
+  background-repeat:no-repeat;
+  width:  22px;
+}
+
+.olControlPanel .olControlZoomBoxItemActive {
+  background-color: blue;
+  background-image: url("../images/zoom_on.png");
+  background-repeat:no-repeat;
+  width:  22px;
+}
+
+.olControlPanel .olControlDrawFeaturePointItemInactive {
+  background-image:url("../images/add_point_off.png");
+  background-repeat:no-repeat;
+}
+
+.olControlPanel .olControlDrawFeaturePointItemActive {
+  background-image:url("../images/add_point_on.png");
+  background-repeat:no-repeat;
+}
+
+.olControlPanel .olControlDrawFeaturePolygonItemInactive {
+  background-image:url("../images/draw_polygon_off.png");
+  background-repeat:no-repeat;
+}
+
+.olControlPanel .olControlDrawFeaturePolygonItemActive {
+  background-image:url("../images/draw_polygon_on.png");
+  background-repeat:no-repeat;
+}
+
+.olControlPanel .olControlDrawFeaturePathItemInactive {
+  background-image:url("../images/draw_line_off.png");
+  background-repeat:no-repeat;
+}
+
+.olControlPanel .olControlDrawFeaturePathItemActive {
+  background-image:url("../images/draw_line_on.png");
+  background-repeat:no-repeat;
+}
+
+/*
+.olControlEditingToolbar .olControlZoomBoxItemInactive {
+width:  25px;
+height: 25px;
+background-color: orange;
+background-image: url("../openlayers/img/drag-rectangle-off.png");
+}
+.olControlEditingToolbar .olControlZoomBoxItemActive {
+width:  25px;
+height: 25px;
+background-color: blue;
+background-image: url("../openlayers/img/drag-rectangle-on.png");
+}
+*/
+
+.olControlEditingToolbar {
+  left: 80px;
+}

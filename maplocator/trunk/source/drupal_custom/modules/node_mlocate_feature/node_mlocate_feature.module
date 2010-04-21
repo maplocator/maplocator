@@ -1,0 +1,393 @@
+<?php
+/*
+All MapLocator code is Copyright 2010 by the original authors.
+
+This work is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or any
+later version.
+
+This work is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See version 3 of
+the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+Version 3 along with this program as the file LICENSE.txt; if not,
+please see http://www.gnu.org/licenses/gpl-3.0.html.
+
+*/
+
+/***
+*This the module file for customized drupal module "node_mlocate_feature" .
+*
+***/
+
+// $Id$
+
+/**
+* Display help and module information
+* @param path which path of the site we're displaying help
+* @param arg array that holds the current path as would be returned from arg() function
+* @return help text for the path
+*/
+
+define("AUTO_DBCOL_PREFIX", "__mlocate__");
+
+function node_mlocate_feature_help($path, $arg) {
+  $output = '';
+  switch ($path) {
+    case "admin/help#node_mlocate_feature":
+      $output = '<p>'.  t("Provides node for MLOCATE.") .'</p>';
+      break;
+  }
+  return $output;
+} // function node_mlocate_feature_help
+
+/**
+ * Implementation of hook_perm().
+ *
+ * Since we are limiting the ability to create new nodes to certain users,
+ * we need to define what those permissions are here. We also define a permission
+ * to allow users to edit the nodes they created.
+ */
+function node_mlocate_feature_perm() {
+  return array(
+    'access node_mlocate_feature',
+    'create node_mlocate_feature',
+  	'delete own node_mlocate_feature',
+  	'delete any node_mlocate_feature',
+  	'edit own node_mlocate_feature',
+  	'edit any node_mlocate_feature'
+  );
+} // function node_mlocate_feature_perm()
+
+/**
+ * Implementation of hook_node_info(). This function replaces hook_node_name()
+ * and hook_node_types() from 4.6. Drupal 5 expands this hook significantly.
+ *
+ * This is a required node hook. This function describes the nodes provided by
+ * this module.
+ *
+ * The required attributes are:
+ * - "name" provides a human readable name for the node,
+ * - "module" tells Drupal how the module's functions map to hooks (i.e. if the
+ *   module is node_mlocate_feature_foo then node_mlocate_feature_foo_insert will be called
+ *   when inserting the node).
+ * - "description" provides a brief description of the node type, which is
+ *   show up when a user accesses the "Create content" page for that node type.
+ *
+ * The other optional, attributes:
+ * - "has_title" boolean that indicates whether or not this node type has a
+ *   title field.
+ * - "title_label": the label for the title field of this content type.
+ * - "has_body": boolean that indicates whether or not this node type has a
+ *   body field.
+ * - "body_label": the label for the body field of this content type.
+ * - "min_word_count": the minimum number of words for the body field to be
+ *   considered valid for this content type.
+ */
+function node_mlocate_feature_node_info() {
+  return array(
+    'node_mlocate_feature' => array(
+      'name' => t('MLOCATE node'),
+      'module' => 'node_mlocate_feature',
+      'description' => t("This is an MLOCATE node type."),
+      'has_title' => TRUE,
+      'title_label' => t('Title'),
+      'has_body' => TRUE,
+      'body_label' => t('Description'),
+    )
+  );
+}
+
+/**
+ * Implementation of hook_access().
+ *
+ * Node modules may implement node_access() to determine the operations
+ * users may perform on nodes.
+ */
+function node_mlocate_feature_access($op, $node, $account) {
+  if ($op == 'view') {
+    return user_access('access node_mlocate_feature', $account);
+  }
+
+  if ($op == 'create') {
+    return user_access('create node_mlocate_feature', $account);
+  }
+
+  if ($op == 'update') {
+    if (user_access('edit any node_mlocate_feature', $account) || (user_access('edit own node_mlocate_feature', $account) && ($account->uid == $node->uid))) {
+      return TRUE;
+    }
+  }
+
+  if ($op == 'delete') {
+    if (user_access('delete any node_mlocate_feature', $account) || (user_access('delete own node_mlocate_feature', $account) && ($account->uid == $node->uid))) {
+      return TRUE;
+    }
+  }
+}
+
+/**
+ * Implementation of hook_form().
+ *
+ * Now it's time to describe the form for collecting the information
+ * specific to this node type. This hook requires us to return an array with
+ * a sub array containing information for each element in the form.
+ */
+function node_mlocate_feature_form(&$node) {
+  /*
+  if(arg(3)) {
+    $node->location = arg(3);
+  }
+  */
+  global $user;
+  $node->user_id = $user->uid;
+
+  // The site admin can decide if this node type has a title and body, and how
+  // the fields should be labeled. We need to load these settings so we can
+  // build the node form correctly.
+  $type = node_get_types('type', $node);
+
+  if ($type->has_title) {
+    $form['title'] = array(
+      '#type' => 'textfield',
+      '#title' => check_plain($type->title_label),
+      '#required' => TRUE,
+      '#default_value' => $node->title,
+      '#weight' => -5
+    );
+  }
+
+  if ($type->has_body) {
+    // In Drupal 6, we can use node_body_field() to get the body and filter
+    // elements. This replaces the old textarea + filter_form() method of
+    // setting this up. It will also ensure the teaser splitter gets set up
+    // properly.
+    $form['body_field'] = node_body_field($node, $type->body_label, $type->min_word_count);
+  }
+
+  // Now we define the form elements specific to our node type.
+  /*
+  $form['custom_template'] = array(
+    '#type' => 'hidden',
+    '#value' => arg(3),
+  );
+  */
+
+  /*
+  $form['location'] = array(
+    '#type' => 'hidden',
+    '#value' => $node->location,
+  );
+
+  $form['user_id'] = array(
+    '#type' => 'hidden',
+    '#value' => $node->user_id,
+  );
+
+  $form['loc_desc'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Description'),
+    '#default_value' => isset($node->loc_desc) ? $node->loc_desc : '',
+    '#maxlength' => 255,
+	'#required' => TRUE,
+  );
+
+  $categories = db_query("SELECT category_id, category_name FROM {category}");
+
+  while ($record = db_fetch_array($categories)) {
+    $categories_arr[$record['category_id']] = $record['category_name'];
+  }
+
+  $form['cat_id'] = array(
+    '#type' => 'select',
+    '#title' => t('Category'),
+    '#options' => $categories_arr,
+    '#description' => t('Please choose a category.'),
+	'#required' => TRUE,
+	'#default_value' => $node->cat_id,
+  );
+  */
+  return $form;
+}
+
+/**
+ * Implementation of hook_validate().
+ *
+ * Our "quantity" field requires a number to be entered. This hook lets
+ * us ensure that the user entered an appropriate value before we try
+ * inserting anything into the database.
+ *
+ * Errors should be signaled with form_set_error().
+ */
+ /*
+function node_mlocate_feature_validate(&$node) {
+  if ($node->loc_desc) {
+    if (empty($node->loc_desc)) {
+      form_set_error('loc_desc', t('Please enter some description.'));
+    }
+  }
+  else {
+    $node->loc_desc = '';
+  }
+}
+*/
+
+/**
+ * Implementation of hook_insert().
+ *
+ * As a new node is being inserted into the database, we need to do our own
+ * database inserts.
+ */
+function node_mlocate_feature_insert($node) {
+
+  if(isset($_GET['layer_id'])) {
+    $layer_id = $_GET['layer_id'];
+
+    $sql = "select layer_tablename from \"Meta_Layer\" where layer_id = {$layer_id}";
+    $res = db_fetch_array(db_query($sql));
+    $layer_tablename = $res[layer_tablename];
+  } elseif(isset($_GET['layer_tablename'])) {
+    $layer_tablename = $_GET['layer_tablename'];
+  }
+
+  if(isset($_GET['point_id']) && isset($layer_tablename)) {
+    $point_id = $_GET['point_id'];
+
+    db_query("update \"{$layer_tablename}\" set ".AUTO_DBCOL_PREFIX."nid = %d where ".AUTO_DBCOL_PREFIX."id = %d", $node->nid, $point_id);
+
+    if(!function_exists("notify_admin_of_node_update")) {
+      $SCRIPT_FILENAME = $_SERVER['SCRIPT_FILENAME'];
+      $pos = strpos($SCRIPT_FILENAME, "sites/all/modules");
+      $dir_path = substr($SCRIPT_FILENAME, 0, $pos);
+      require_once($dir_path . "functions.php");
+    }
+    notify_admin_of_node_update("Feature info for {$point_id}", $layer_tablename, $node->nid, 'insert');
+  }
+}
+
+/**
+ * Implementation of hook_update().
+ *
+ * As an existing node is being updated in the database, we need to do our own
+ * database updates.
+ */
+ /*
+function node_mlocate_feature_update($node) {
+  // if this is a new node or we're adding a new revision,
+  if ($node->revision) {
+    node_mlocate_feature_insert($node);
+  }
+  else {
+    //db_query("UPDATE {\"node_mlocate_feature\"} SET user_id = %d, location = '%s', loc_desc = '%s', cat_id = %d WHERE vid = %d", $node->user_id, $node->location, $node->loc_desc, $node->cat_id, $node->vid);
+  }
+}
+*/
+
+/**
+ * Implementation of hook_nodeapi().
+ *
+ * When a node revision is deleted, we need to remove the corresponding record
+ * from our table. The only way to handle revision deletion is by implementing
+ * hook_nodeapi().
+ */
+function node_mlocate_feature_nodeapi(&$node, $op, $teaser, $page) {
+/*
+  switch ($op) {
+    case 'delete revision':
+      // Notice that we're matching a single revision based on the node's vid.
+      db_query('DELETE FROM {"node_node_mlocate_feature"} WHERE vid = %d', $node->vid);
+      break;
+  }
+*/
+}
+
+/**
+ * Implementation of hook_delete().
+ *
+ * When a node is deleted, we need to remove all related records from out table.
+ */
+function node_mlocate_feature_delete($node) {
+  $layer_id = $_GET['layer_id'];
+  $point_id = $_GET['point_id'];
+
+  $sql = "select layer_tablename from \"Meta_Layer\" where layer_id = {$layer_id}";
+  $res = db_fetch_array(db_query($sql));
+  $layer_tablename = $res[layer_tablename];
+
+  db_query("update \"{$layer_tablename}\" set nid = 0 where id = " . $point_id);
+}
+
+/**
+ * Implementation of hook_load().
+ *
+ * Now that we've defined how to manage the node data in the database, we
+ * need to tell Drupal how to get the node back out. This hook is called
+ * every time a node is loaded, and allows us to do some loading of our own.
+ */
+ /*
+function node_mlocate_feature_load($node) {
+  $additions = db_fetch_object(db_query('SELECT user_id, location, loc_desc, cat_id FROM {"node_node_mlocate_feature"} WHERE vid = %d', $node->vid));
+  return $additions;
+}
+*/
+
+/**
+ * Implementation of hook_view().
+ *
+ * This is a typical implementation that simply runs the node text through
+ * the output filters.
+ */
+ /*
+function node_mlocate_feature_view($node, $teaser = FALSE, $page = FALSE) {
+  $node = node_prepare($node, $teaser);
+  $node->content['myfield'] = array(
+    '#value' => theme('node_mlocate_feature_info', $node),
+    '#weight' => 1,
+  );
+
+  return $node;
+}
+*/
+
+/**
+ * Implementation of hook_theme().
+ *
+ * This lets us tell Drupal about our theme functions and their arguments.
+ */
+ /*
+function node_mlocate_feature_theme() {
+  return array(
+    'node_mlocate_feature_info' => array(
+      'arguments' => array('node'),
+    ),
+  );
+}
+*/
+
+/**
+ * A custom theme function.
+ *
+ * By using this function to format our node-specific information, themes
+ * can override this presentation if they wish. We also wrap the default
+ * presentation in a CSS class that is prefixed by the module name. This
+ * way, style sheets can modify the output without requiring theme code.
+ */
+ /*
+function theme_node_mlocate_feature_info($node) {
+  $output = '<div class="node_mlocate_feature_info">';
+  $output .= t('user_id: %user_id location: %location loc_desc: %loc_desc cat_id: %cat_id.', array('%user_id' => check_plain($node->user_id), '%location' => check_plain($node->location), '%loc_desc' => check_plain($node->loc_desc), '%cat_id' => check_plain($node->cat_id)));
+  $output .= '</div>';
+  return $output;
+}
+*/
+
+/*
+function node_mlocate_feature_link_alter(&$links, $node) {
+  foreach ($links AS $module => $link) {
+    //$links[$module]['href'] .= "?destination=".$links[$module]['href']."/".arg(2)."/";
+  }
+}
+*/

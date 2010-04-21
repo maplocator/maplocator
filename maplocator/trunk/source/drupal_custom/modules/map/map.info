@@ -1,0 +1,8 @@
+;Information about map module
+;$Id$
+
+name = Map
+description = Complete map module for MapLocator
+core = 6.x
+package = MapLocator
+version = VERSION

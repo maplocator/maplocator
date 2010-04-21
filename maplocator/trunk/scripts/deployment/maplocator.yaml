@@ -1,0 +1,46 @@
+--- # config file for code deployment
+
+# you will not need to change this section frequently
+svn_config:
+  url: "<repository_url>"
+  cfg_dir: "svn_config"
+
+# you will not need to change this section frequently
+svn_path:
+  openlayers: "lib/common/openlayers"
+  drupal: "lib/common/drupal-6.14"
+  drupal_modules: "lib/common/drupal_modules"
+  custom_modules: "source/drupal_custom/modules"
+  config_path: "config" # copy this to root
+  custom_ajax: "source/server/ajax" # goes to root
+  custom_flash: "source/server/flash" # goes to root
+  custom_theme: "source/drupal_custom/theme/maplocator" # copy this to sites/all/themes by the deployment name
+  custom_standalone_pages:  "source/server/standalone_pages" # root
+  thirdparty_javascript_code: "lib/common/javascript" # root
+  treeview: "lib/common/treeview-1.4.1" #root
+# apache user
+apache:
+  user: "www-data"
+  group: "www-data"
+
+# the local paths
+path:
+  deploy: "C:/ms4w/apps/maplocator"
+  tmp: "C:/maplocator/temp"
+  backup: "C:/maplocator/bakup"
+  
+#modules that should be moved to deploy folder
+drupal_modules:
+  external:
+    - "captcha"
+    - "fckeditor"
+    - "image"
+    - "nice_menus"
+    - "google_analytics"
+  custom:
+    - "map"
+    - "node_mlocate_feature"
+    - "node_mlocate_layerinfo"
+    - "node_mlocate_participation"
+    - "node_mlocate_themeinfo"
+    

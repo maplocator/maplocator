@@ -1,0 +1,14 @@
+    group world 
+    dump true
+    METADATA
+       "wfs_title" "Factbook Metadata"
+       "gml_include_items" "all"
+       "wms_feature_info_mime_type" "text/html"
+    END
+    template "template.html" 
+    projection
+      "init=epsg:4326"
+    end
+    transparency 65
+    status on
+  

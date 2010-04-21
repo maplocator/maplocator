@@ -1,0 +1,148 @@
+<!--
+This is a custom configuration file used to set various parameters for the map.
+This file needs to be configured and or customized with every deployement of Map Locator
+-->
+<CONFIG>
+	<!-- This variable is used in the code to add any custom functionality -->
+	<DEPLOYMENT_FOR>MapLocator</DEPLOYMENT_FOR>
+
+	<!-- This section holds variables specific to the map -->
+	<MAP>
+
+		<!-- This variable holds base map projection value.
+			 Since default map set is google, spherical mercator(EPSG:900913) is the projection set.
+		-->
+		<BASE_MAP_PROJECTION>EPSG:900913</BASE_MAP_PROJECTION>
+
+		<!-- This variable holds layer projection value.
+			 wsg:84 is default value set(This is the projection for the data in the DB).
+		-->
+		<CUR_LAYER_PROJECTION>EPSG:4326</CUR_LAYER_PROJECTION>
+
+		<!-- This variable holds layer projection value.
+			 wsg:84 is default value set.
+		-->
+		<DEFAULT_PROJECTION>EPSG:4326</DEFAULT_PROJECTION>
+
+		<!-- This z-index value is used by the div for block UI window("please wait message")-->
+		<BLOCKUI_Z_INDEX>10000</BLOCKUI_Z_INDEX>
+
+		<!-- Minimum zoom level for the map can be configured here-->
+		<MIN_ZOOM_LEVEL>2</MIN_ZOOM_LEVEL>
+
+		<!-- This value pair holds co-ordinate values to set map center. It is in EPSG:900913 projection-->
+		<CENTER>8905559.262222223,2632018.6372200437</CENTER>
+
+		<!-- This value pair sets the minimum size for the feature pop-up -->
+		<POPUP_MINSIZE>480,300</POPUP_MINSIZE>
+
+		<!-- Max zoom level for the map can be configured here -->
+		<NUM_ZOOM_LEVEL>19</NUM_ZOOM_LEVEL>
+
+		<!-- Max number of layers that can be shown on the map at a time is set here.
+			This setting has been done for performance optimization only 10 layers can be shown on the map
+		-->
+		<MAX_LAYERS>10</MAX_LAYERS>
+
+		<!--
+			Active map(layer) is highlighted and all maps other than the active map displayed is
+			faded but will is visible on the map. This setting is configured here.
+		-->
+		<ACTIVE_LAYER_FILLOPACITY>1</ACTIVE_LAYER_FILLOPACITY>
+
+		<ACTIVE_LAYER_STROKEOPACITY>1</ACTIVE_LAYER_STROKEOPACITY>
+
+		<INACTIVE_LAYER_FILLOPACITY>0.4</INACTIVE_LAYER_FILLOPACITY>
+
+		<INACTIVE_LAYER_STROKEOPACITY>0.5</INACTIVE_LAYER_STROKEOPACITY>
+
+
+		<!-- other map specific parameters for setting the viewport and location of the map -->
+		<MIN_ZOOM>5</MIN_ZOOM>
+
+		<MAP_CENTER>80,23</MAP_CENTER>
+
+		<MAX_EXTENT>5801108.428222222,-7.081154550627198, 12138100.077777777, 4439106.786632658</MAX_EXTENT>
+
+		<MAP_EXTENT>6567849.955888889,1574216.547942332,11354588.059333334,3763310.626620795</MAP_EXTENT>
+
+		<RESTRICTED_EXTENT>5801108.428222222,674216.547942332, 12138100.077777777, 4439106.786632658</RESTRICTED_EXTENT>
+		<!-- This contorls switching on and off various controls -->
+		<BIRDS_EYE_VIEW_ENABLED>false</BIRDS_EYE_VIEW_ENABLED>
+
+		<CHLOROPLETH_ENABLED>true</CHLOROPLETH_ENABLED>
+
+		<GOOGLE_EARTH_ENABLED>true</GOOGLE_EARTH_ENABLED>
+
+		<!--Replace this key with your IP specific map key genetred by google on maps.google.com-->
+		<GOOGLE_MAP_API_KEY><!-- add uour custom key here --></GOOGLE_MAP_API_KEY>
+
+		<!--Replace this key with your IP specific ajax search key -->
+		<GOOGLE_AJAXSEARCH_API_KEY><!-- add uour custom key here --></GOOGLE_AJAXSEARCH_API_KEY>
+
+		<!--1st BASE_MAP with enabled="true" will be default base map source-->
+
+		<BASE_MAP source="GOOGLE" enabled="true">
+
+
+			<BASE_LAYER>Google Physical</BASE_LAYER>
+			<BASE_LAYER>Google Satellite</BASE_LAYER>
+			<BASE_LAYER>Google Hybrid</BASE_LAYER>
+			<BASE_LAYER>Google Streets</BASE_LAYER>
+
+		</BASE_MAP>
+
+
+		<BASE_MAP source="YAHOO" enabled="false">
+
+			<BASE_LAYER>Yahoo Street</BASE_LAYER>
+			<BASE_LAYER>Yahoo Hybrid</BASE_LAYER>
+			<BASE_LAYER>Yahoo Satellite</BASE_LAYER>
+
+		</BASE_MAP>
+
+		<BASE_MAP source="VIRTUALEARTH" enabled="false">
+
+			<BASE_LAYER>VirtualEarth Satellite</BASE_LAYER>
+			<BASE_LAYER>VirtualEarth Streets</BASE_LAYER>
+			<BASE_LAYER>VirtualEarth Hybrid</BASE_LAYER>
+			<BASE_LAYER>VirtualEarth BirdsEye</BASE_LAYER>
+
+		</BASE_MAP>
+
+		<!--This base map is for MapLocator. Add base layers specific to MapLocator  here -->
+		<BASE_MAP source="CUSTOM" enabled="false">
+
+			<BASE_LAYER></BASE_LAYER>
+
+		</BASE_MAP>
+
+
+	</MAP>
+
+
+	<!-- This section contains configuation for other custom paramters which are deplyment specific-->
+	<CUSTOM>
+		<!-- When explore window is launch the option to be selected by default is set here. 1 indicates
+			layer by theme is selected while 2 indicates layers by geography
+		-->
+		<DEFAULT_LAYERTREE_OPT>1</DEFAULT_LAYERTREE_OPT>
+		<!--
+		 For site admin (drupal) user , site admin role is configured here
+		-->
+		<SITE_ADMIN_ROLE>mlocate_site_admin</SITE_ADMIN_ROLE>
+
+		<!-- Any new additions and updates are notified through this mail id -->
+		<UPDATE_MAIL_ID>update@indiabiodiversity.org</UPDATE_MAIL_ID>
+
+		<!-- site title configured here -->
+		<SITE_TITLE>Map Locator</SITE_TITLE>
+
+		<!-- ffmpeg path -->
+		<FFMPEG_PATH>ffmpeg</FFMPEG_PATH>
+	</CUSTOM>
+
+
+
+
+</CONFIG>

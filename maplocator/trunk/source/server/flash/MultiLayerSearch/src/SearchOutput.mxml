@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	layout="vertical" 
+	width="750" 
+	height="450"
+	showCloseButton="true"
+	close="titleWinClose(event)"  
+	title="Search Output">
+	<mx:Script>
+		<![CDATA[
+			import mx.containers.Panel;
+			import mx.core.Application;
+			import mx.controls.Alert;
+			import mx.collections.ArrayCollection;
+			import mx.controls.Label;
+			import mx.controls.dataGridClasses.DataGridColumn;
+			import mx.controls.DataGrid;
+			import mx.managers.PopUpManager;
+			import mx.events.CloseEvent;
+			
+			[Bindable] 
+			private var datapr:ArrayCollection;			
+			private var parentContainer:Panel;
+			
+			private function titleWinClose(evt:CloseEvent):void {				
+				PopUpManager.removePopUp(this);
+				parentContainer.enabled = true;		
+				ExternalInterface.call("changeDivWidth", 0);							
+			}
+			
+			public function showOutputResult(result:Object, container:Panel):void {
+				this.parentContainer = container;
+				
+				var key1:String="";		
+				for (key1 in result) {					
+					var value1:Object = result[key1];					
+					var lbl:Label = new Label();
+					base.addChild(lbl);													
+					lbl.text = "Table: "+key1;
+					lbl.setStyle("fontWeight","bold");
+					lbl.setStyle("fontSize","12");				
+					var resdg:DataGrid = new DataGrid();					
+					resdg.wordWrap = true;
+					base.addChild(resdg);					
+					var colNames:Array = new Array();					
+					datapr = new ArrayCollection();					
+					resdg.dataProvider = datapr;										
+										
+					var total_rows:int = -1;					
+					for(var rowIter:int = 0; ;rowIter++) {
+						var row:Object =  new Object();						
+						for (var key2:String in value1) {
+							var value2:Object = value1[key2];
+							if(total_rows == -1) {																
+								for (var key3:String in value2) 
+									total_rows++;								
+							}							
+							if(rowIter == 0) {
+								var col:DataGridColumn = new DataGridColumn(key2);
+								col.width = 150;																
+								colNames.push(col);
+							}							
+							row[key2] = value2[rowIter];																		
+						}
+						if (total_rows == -1) { //means the table will be empty so remove the empty datagrid & label 
+							base.removeChild(resdg);
+							var temp_lbl:Label = new Label();
+							base.addChild(temp_lbl);													
+							temp_lbl.text = "NO DATA";
+								
+							break;
+						}						
+						if(rowIter == 0) {							
+							resdg.columns = colNames;
+						}
+						datapr.addItem(row);						
+						if (rowIter == total_rows)
+							break;
+					}
+					if (datapr.length > 5)
+						resdg.rowCount = 5;
+					else
+					 	resdg.rowCount = datapr.length;
+				}
+				if(key1 == "") {
+					var lbl1:Label = new Label();
+					base.addChild(lbl1);													
+					lbl1.text = "NO DATA";
+				}				
+			}
+		]]>
+	</mx:Script>
+	<mx:VBox id="base" width="100%" height="100%" />
+</mx:TitleWindow>

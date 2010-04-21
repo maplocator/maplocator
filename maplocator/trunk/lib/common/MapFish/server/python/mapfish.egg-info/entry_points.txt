@@ -1,0 +1,8 @@
+
+        [paste.paster_create_template]
+        mapfish = mapfish.util:MapFishTemplate
+        [paste.paster_command]
+        mf-controller = mapfish.commands:MapFishControllerCommand
+        mf-model = mapfish.commands:MapFishModelCommand
+        mf-layer = mapfish.commands:MapFishLayerCommand
+        

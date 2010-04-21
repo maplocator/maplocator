@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Map printing with a simple form</title>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css"
+      href="../../mfbase/ext/resources/css/ext-all.css"/>
+<link rel="stylesheet" type="text/css"
+      href="../../mfbase/mapfish/mapfish.css"/>
+
+<script type="text/javascript"
+        src="../../mfbase/openlayers/lib/Firebug/firebug.js"></script>
+<script type="text/javascript"
+        src="../../mfbase/openlayers/lib/OpenLayers.js"></script>
+
+<script type="text/javascript"
+        src="../../mfbase/ext/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="../../mfbase/ext/ext-all-debug.js"></script>
+
+<script type="text/javascript">
+  // Because of a bug in Firefox 2 we need to specify the MapFish base path.
+  // See https://bugzilla.mozilla.org/show_bug.cgi?id=351282
+  var gMfLocation = "../../mfbase/mapfish/";
+</script>
+<script type="text/javascript" src="../../mfbase/mapfish/MapFish.js"></script>
+<script type="text/javascript" src="../examples.js"></script>
+
+<style type="text/css">
+  html, body {
+    font: normal 12px verdana;
+    margin: 0;
+    padding: 0;
+    border: 0 none;
+    overflow: hidden;
+    height: 100%;
+  }
+</style>
+<script type="text/javascript">
+
+  // reference local blank image
+  Ext.BLANK_IMAGE_URL = '../../mfbase/ext/resources/images/default/s.gif';
+  Ext.onReady(function() {
+
+    var map = new OpenLayers.Map($('center'));
+
+    var wms = new OpenLayers.Layer.WMS("OpenLayers WMS",
+            "http://labs.metacarta.com/wms/vmap0", {layers: 'basic'}, {buffer: 0});
+    map.addLayers([wms]);
+
+    var summits = new OpenLayers.Layer.WMS("Summits",
+            "http://demo.mapfish.org/mapfishsample/1.1/wms?",
+            {layers: ['summits'], format: 'image/png', transparent: true},
+            {visibility: false, singleTile: true}
+    );
+    map.addLayer(summits);
+
+    var countries = new OpenLayers.Layer.WMS("Countries",
+            "http://demo.mapfish.org/mapfishsample/1.1/wms?",
+            {layers: ['countries'], format:  OpenLayers.Util.alphaHack()?'image/gif':'image/png', transparent: true},
+            {visibility: true, singleTile: true}
+    );
+    map.addLayer(countries);
+
+    map.addControl(new OpenLayers.Control.LayerSwitcher());
+
+    var layerOverrides={
+        "OpenLayers WMS": {overview: true},
+        Countries: { format: 'image/svg+xml' }
+    };
+
+    var printConfigUrl = mapfish.SERVER_BASE_URL + 'print/info.json';
+    //var printConfigUrl = '/tomcat/print-servlet-1.1-SNAPSHOT/pdf/info.json';
+
+    var toolbar = new mapfish.widgets.toolbar.Toolbar({
+        map: map,
+        configurable: false,
+        items: [new mapfish.widgets.print.PrintAction({
+            map: map,
+            configUrl: printConfigUrl,
+            overrides: layerOverrides,
+            fillSpec: function(printCommand) {
+                mapfish.widgets.print.PrintAction.prototype.fillSpec.call(this, printCommand);
+
+                //our layout needs two fields... hard code them here
+                printCommand.spec.comment = "No comment";
+                printCommand.spec.mapTitle = "PrintControl";
+            }
+        })]
+    });
+
+    var viewport = new Ext.Viewport({
+      layout:'border',
+      items:[
+        new Ext.BoxComponent({ // raw
+          region: 'north',
+          el: 'north',
+          height: 32
+        }),
+        {
+          region: 'west',
+          id: 'west-panel',
+          title: 'West',
+          split: true,
+          width: 280,
+          minSize: 175,
+          maxSize: 400,
+          collapsible: true,
+          margins: '0 0 0 5',
+          layout: 'accordion',
+          defaults: {
+            collapsed: true
+          },
+          layoutConfig:{
+            animate: true,
+            activeOnTop: false
+          },
+          items: [
+            {
+              contentEl: 'help',
+              collapsed: false,
+              title: 'Help',
+              autoScroll: true,
+              bodyStyle: 'padding: 7px;',
+              border: false
+            },
+            {
+              xtype: 'print-simple',
+              title: 'Print single page',
+              bodyStyle: 'padding: 7px;',
+              formConfig: {
+                labelWidth: 65,
+                defaults: {
+                  width: 140,
+                  listWidth: 140
+                },
+                items: [
+                  {
+                    xtype: 'textfield',
+                    fieldLabel: OpenLayers.Lang.translate('mf.print.mapTitle'),
+                    name: 'mapTitle',
+                    value: 'Map title'
+                  },
+                  {
+                    xtype: 'textarea',
+                    fieldLabel: OpenLayers.Lang.translate('mf.print.comment'),
+                    name: 'comment',
+                    height: 100,
+                    value: 'Some comments'
+                  }
+                ]
+              },
+              border: false,
+              map: map,
+              configUrl: printConfigUrl,
+              overrides: layerOverrides
+            },
+            {
+              xtype: 'print-multi',
+              title: 'Print multi page',
+              formConfig: {
+                labelWidth: 65,
+                bodyStyle: 'padding: 7px;',
+                defaults: {
+                  width: 140,
+                  listWidth: 140
+                }/*,
+                items: [
+                  {
+                    xtype: 'textfield',
+                    fieldLabel: 'Title',
+                    name: 'title',
+                    value: 'Map title'
+                  }
+                ]*/
+              },
+              columns: [
+                  {
+                      header: OpenLayers.Lang.translate('mf.print.mapTitle'),
+                      dataIndex: 'mapTitle',
+                      editor: new Ext.form.TextField()
+                  },
+                  {
+                      header: OpenLayers.Lang.translate('mf.print.comment'),
+                      dataIndex: 'comment',
+                      editor: new Ext.form.TextField()
+                  }
+              ],
+              border: false,
+              map: map,
+              configUrl: printConfigUrl,
+              overrides: layerOverrides
+            }
+          ]
+        },{
+            region: 'center',
+            title: 'Map',
+            layout: 'fit',
+            xtype: 'mapcomponent',
+            map: map,
+            tbar: toolbar
+        }]
+    });
+
+    map.setCenter(new OpenLayers.LonLat(8.5, 0), 3);
+  });
+</script>
+</head>
+<body>
+  <div id="west"></div>
+  <div id="north">
+    <p style="font-size:14pt" align="center">MapFish printer</p>
+  </div>
+  <div id="center"></div>
+  <div id="help">
+      There are 3 tools available for the PDF generation (printing):<br/><br/>
+      <ul style="list-style: disc outside; padding-left: 20px;">
+          <li><b>mapfish.widgets.print.SimpleForm</b>:<br />
+              Shows a form and let the user choose the extent of a single page.<br/>
+              You can find it in the West panel.<br/><br/>
+          </li>
+          <li><b>mapfish.widgets.print.MultiPage</b>:<br />
+              Show a table and a form and let the user choose the extent of multiple pages.<br/>
+              You can find it in the West panel.<br/><br/>
+          </li>
+          <li><b>mapfish.PrintAction</b>:<br />
+              An Ext.Action that prints a single page with an extent that fits as good as possible the current map's extent.<br/>
+              You can find it in the toolbar over the map.<br/><br/>
+          </li>
+      </ul>
+      <p>You can enable the "summit" layer (click on the "+" on the right of the map) and it will shown on the PDF as well.</p>
+      <p>Don't hesitate to play with the Layout and DPI fields in the forms.</p>      
+  </div>
+</body>
+</html>

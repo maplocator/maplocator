@@ -1,0 +1,40 @@
+map
+  size 725 800 
+  imagetype png 
+  imagecolor 225 225 225
+  #shapepath "/www/freemap.in/world/data"
+  #fontset "/www/freemap.in/docs/fonts.txt"
+  #symbolset "/www/freemap.in/docs/symbolset.txt"
+  SYMBOLSET 'examples.sym'
+  projection
+    "init=epsg:4326"
+  end
+  #extent -180 -90 180 90 
+  extent 60 0 100 40 
+  maxsize 4096
+  #units dd 
+  web
+    #imagepath "/www/freemap.in/mumbai/mstmp/"
+    #imageurl "/mstmp/"
+    metadata
+      "wms_feature_info_mime_type" "text/html"
+      "wms_srs" "epsg:4326 epsg:2805 epsg:24600 epsg:54004 EPSG:900913"
+    end
+  end
+  outputformat
+    name "png"
+    driver "GD/PNG"
+    imagemode "rgba"
+    extension "png"
+    mimetype "image/png"
+    imagemode RGBA
+    TRANSPARENT ON
+    FORMATOPTION "INTERLACE=OFF"
+  end
+  outputformat
+    name "jpg"
+    driver "GD/JPEG"
+    extension "jpg"
+    formatoption "QUALITY=85"
+  end
+  

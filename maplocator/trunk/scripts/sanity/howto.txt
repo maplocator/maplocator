@@ -1,0 +1,9 @@
+For Windows:
+  run sanity.bat > sanity.log
+For Linux:
+  rename sanity.bat to sanity.sh
+  Add #!/bin/bash to the top of the file
+  chmod +x sanity.sh
+  run sanity.sh > sanity.log
+Open sanity.log
+Ignore summary columns missing in link tables. Rest gives the errors.

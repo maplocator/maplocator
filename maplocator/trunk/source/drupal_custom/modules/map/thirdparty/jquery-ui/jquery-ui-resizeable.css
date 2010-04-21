@@ -1,0 +1,67 @@
+.ui-resizable-handle {
+	position: absolute;
+	font-size: 0.1px;
+	z-index: 99999;
+}
+.ui-resizable .ui-resizable-handle {
+	display: block; 
+}
+body .ui-resizable-disabled .ui-resizable-handle { display: none; } /* use 'body' to make it more specific (css order) */
+body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body' to make it more specific (css order) */
+.ui-resizable-n { 
+	cursor: n-resize; 
+	height: 7px; 
+	width: 100%; 
+	top: -5px; 
+	left: 0px;  
+}
+.ui-resizable-s { 
+	cursor: s-resize; 
+	height: 7px; 
+	width: 100%; 
+	bottom: -5px; 
+	left: 0px; 
+}
+.ui-resizable-e { 
+	cursor: e-resize; 
+	width: 7px; 
+	right: -5px; 
+	top: 0px; 
+	height: 100%; 
+}
+.ui-resizable-w { 
+	cursor: w-resize; 
+	width: 7px; 
+	left: -5px; 
+	top: 0px; 
+	height: 100%;
+}
+.ui-resizable-se { 
+	cursor: se-resize; 
+	width: 13px; 
+	height: 13px; 
+	right: 0px; 
+	bottom: 0px; 
+	background: url(../../images/icon_resize_se.gif) no-repeat 0 0;
+}
+.ui-resizable-sw { 
+	cursor: sw-resize; 
+	width: 9px; 
+	height: 9px; 
+	left: 0px; 
+	bottom: 0px;  
+}
+.ui-resizable-nw { 
+	cursor: nw-resize; 
+	width: 9px; 
+	height: 9px; 
+	left: 0px; 
+	top: 0px; 
+}
+.ui-resizable-ne { 
+	cursor: ne-resize; 
+	width: 9px; 
+	height: 9px; 
+	right: 0px; 
+	top: 0px; 
+}

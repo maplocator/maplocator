@@ -1,0 +1,80 @@
+WHAT?
+=====
+
+A command line utility or a servlet used to generate a PDF version of some
+layers.
+
+
+HOW TO BUILD?
+=============
+
+To build this project, you need:
+  - Maven 2 (http://maven.apache.org/)
+  - JRE >= 1.5
+
+The other external libs are taken care of by maven
+
+The build command to use is:
+  cd %PROJECT_DIR%/%MAPFISH_DIR%/server/java/print/
+  mvn clean install
+
+
+HOW TO USE IT?
+==============
+
+You need to create a YAML configuration file and add some JavaScript code.
+Please read this document:
+  http://trac.mapfish.org/trac/mapfish/wiki/PrintModuleDoc
+
+From the command line
+---------------------
+This method can be used to test the layouts.
+
+Example of command (from the directory SVNROOT/server/java/print/print-standalone):
+  java -Djava.awt.headless=true -cp target/print-standalone.jar org.mapfish.print.ShellMapPrinter --config=samples/config.yaml --spec=samples/spec.json --output=$HOME/print.pdf
+
+Behind a pylons component
+-------------------------
+
+This method should be used only for low traffic web sites. It is quite simple to
+put in place, but may be slow due to the starting time of the JRE environment.
+
+To use it within your MapFish project, build the java application and do the
+following:
+
+1) Edit the development.ini file and add two lines like that to the [DEFAULT]
+   section (change the string "MAPFISH" by something relevant):
+     print.jar = %MAPFISHDIR%/server/java/print/print-standalone/target/print-standalone.jar
+     print.config = %PROJECT_DIR%/print/config.yaml
+
+2) Edit the MY_PROJECT/config/routing.py file and add those 2 lines (just after
+   the "CUSTOM ROUTES HERE"):
+     from mapfish.controllers import printer
+     printer.addRoutes(map, 'print/', 'printer')
+
+3) Create a MY_PROJECT/controllers/printer.py file with this single line as
+   content:
+     from mapfish.controllers.printer import PrinterController
+
+4) If you use the MapFish deploy architecture, add this to your "defaults" file,
+   at the end of the post_fetch_project function and re-deploy:
+     (cd $PROJECT_MAPFISH_DIR/server/java/print/; mvn install || echo "Cannot compile the print module!!!!!!")
+
+5) If you use WSGI, you must add the following line into %PROJECT_DIR%/%PROJECT_NAME%/%PROJECT_NAME%.wsgi (or .wsgi.in)
+   before the "loadapp" call :
+   # configure the logging system
+   from paste.script.util.logging_config import fileConfig
+   fileConfig('%PASTE_CONFIG%')
+
+
+As a tomcat servlet
+-------------------
+
+If you already have a tomcat server running or you have performance issues, this
+is the way to go.
+
+To install it, deploy the WAR file located in this directory:
+  SVNROOT/server/java/print/print-servlet/target
+
+Eventually, edit the web.xml and log4j.properties files. The config.yaml file
+is located in the webapp's root directory.

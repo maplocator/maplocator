@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	layout="absolute" xmlns:ns1="bridge.*" 
+	applicationComplete="initApp()" width="100%" height="100%" xmlns:comp = "*" viewSourceURL="MultiLayerSearch/srcview/index.html">
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.CheckBox;
+			import mx.messaging.channels.StreamingAMFChannel;
+			import mx.messaging.management.Attribute;
+			import mx.managers.PopUpManager;
+			import mx.collections.ArrayCollection;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.http.HTTPService;
+			import mx.controls.Alert;
+			// for parsing json strings, add as3corelib.swc file to the project from: libs/as3corelib-.92.1/lib dir
+			import com.adobe.serialization.json.*;   
+						
+			[Bindable] // to store the list of feature clicked by user
+			private var featureids_arr:Array = new Array();
+				
+			[Bindable] //to store list of layers show to user on UI for feature based search tab
+			private var fb_layers_arr:Array = new Array();
+			
+			[Bindable] //to store list of layers show to user on UI for attribute based search tab
+			private var ab_layers_arr:Array = new Array();
+			
+			[Bindable] // to store the layername and corresponding attributes list
+			private var layer_attr_arr:Array = new Array();
+			
+			private var basePath:String; // flash variable from javascript - /IBP/
+			
+			private var dataFile:String; // flash variable from javascript - MultiLayerSearch.php 
+			
+			private var bbox:String; // flash variable from javascript - the current bounding box value
+			private var layersChecked:String; // flash variable from javascript - list of layers checked seperated by comma
+			
+			private var layersChecked_arr:Array = new Array(); // to store checked layers in an array index
+			
+			// stores as obj with layertablename, list of fids and checked values - as a result of simple search 						
+			private var srch_table_ids:Array = new Array();
+			
+			private function initApp():void {
+								
+				if (loadParams()) {
+					var obj:Object = new Object();
+					// ajax call to get list of all layers for attribute based search box
+					obj.action="getAllLayers";
+					useHttpService(basePath+dataFile, "GET", obj, addLayersToArr_ab,httpFaultHandler);
+					
+					// ajax call to get list of all the layers within the current bounding box for feature based search box
+					obj.action="getBoxLayers";
+					obj.bbox=bbox;
+					useHttpService(basePath+dataFile, "GET", obj, addLayersToArr_fb,httpFaultHandler);
+				}
+				else {
+					container.visible = false;
+				}								
+    		}
+    		
+    		private function loadParams():Boolean {
+    		    // check all the flash varaibles paased bvy javascript and store them in local variables.			
+    			if(application.parameters.basePath == null || application.parameters.dataFile == null || application.parameters.layersChecked == null || application.parameters.bbox == null) {
+                    Alert.show("Required configuration parameters are not set.", "Error");
+                    return false;
+                }
+                basePath = application.parameters.basePath;
+                dataFile = application.parameters.dataFile;
+                bbox = application.parameters.bbox;
+                layersChecked = application.parameters.layersChecked;
+                layersChecked_arr = layersChecked.split(",");                
+                return true;
+			}
+			
+			// function to use ajax service from flash
+			private function useHttpService(url:String, method:String, parameters:Object, resultHandler:Function, faultHandler:Function):void {
+				var service:HTTPService = new HTTPService();
+				service.useProxy = false;
+				service.url = url;
+		    	service.method = method;
+		    	service.resultFormat = "text"; //returns the response as json - so text
+		    	service.requestTimeout = 30;
+		    	service.addEventListener(ResultEvent.RESULT, resultHandler);
+		    	service.addEventListener(FaultEvent.FAULT, faultHandler);
+		    	service.send(parameters);
+			}
+			// adds the layer_name, layertable name and checked value to the array
+			private function addLayersToArr_ab(e:ResultEvent):void {				
+				var resp:Object = JSON.decode(e.result.toString());
+				for (var key:String in resp) {
+      		    	var obj:Object = new Object();
+      		    	obj.label = resp[key];
+      		    	obj.data = key;
+  		    		obj.isSelected = false;      		    		      		    	
+      		    	ab_layers_arr.push(obj); 		    	
+				}
+				setDataProviders(1);				
+			}
+			// adds the layer_name, layertable name and checked value to the array
+			private function addLayersToArr_fb(e:ResultEvent):void {				
+				var resp:Object = JSON.decode(e.result.toString());
+				for (var key:String in resp) {
+      		    	var obj:Object = new Object();
+      		    	obj.label = resp[key];
+      		    	obj.data = key;
+  		    		obj.isSelected = false;      		    		      		    	
+      		    	fb_layers_arr.push(obj); 		    	
+				}
+				setDataProviders(0);
+				if(featureids_arr.length > 0)
+					featureSearch.enabled = true;
+			}
+			// function to handle fault in an ajax call 
+			private function httpFaultHandler(e:FaultEvent):void {
+				Alert.show(e.fault.faultString, "Error");
+			} 
+			// sets the data provider for the list box in feature based and attribute based UI 
+			private function setDataProviders(val:int):void {
+				if(val == 0) {
+					if(fb_layers_lst != null) {						
+						fb_layers_arr.sortOn("label");
+						fb_layers_lst.dataProvider = fb_layers_arr;				
+						fb_layers_lst.invalidateList();
+					}
+				} else if (val == 1) {
+					if(ab_layers_lst != null) {						
+						ab_layers_arr.sortOn("label");
+						ab_layers_lst.dataProvider = ab_layers_arr;
+						ab_layers_lst.invalidateList();
+					}
+				}					
+			}
+			// to handle click event of remove/removeall button for removing selected feature
+			private function removeFeature(val:int):void {
+				if(val == 0)//remove single feature
+					featureids_arr.splice(featureids_lst.selectedIndex,1);
+				else//remove all the features
+					featureids_arr.splice(0, featureids_arr.length);
+				featureids_lst.invalidateList();
+				if(featureids_arr.length < 1) {
+					rmAllBut.enabled = false;
+					rmBut.enabled = false;
+					featureSearch.enabled = false;
+					//fb_hbx2.enabled = false;
+					//fb_hbx3.enabled = false;
+				}
+			}
+			// called from javascript to add a feature clicked by user to the list box 
+			public function addFeatureid(val:int, ltname:String):void {
+				var flag:Boolean = false;
+				for(var i:int = 0; i <featureids_arr.length; i++ ) {
+					if(featureids_arr[i] == (ltname+":"+val.toString())) {
+						flag = true;
+						break;
+					}
+				}
+				if(flag == false) {
+					featureids_arr.push(ltname+":"+val.toString());					
+					featureids_lst.invalidateList();
+					
+					rmBut.enabled = true;
+					rmAllBut.enabled = true;
+					if(fb_layers_arr.length > 0)
+						featureSearch.enabled = true;
+					//fb_hbx2.enabled = true;
+					//fb_hbx3.enabled = true;
+				}			
+			}
+			// returns a comma seperated string of feature ids from the list box for feature based search
+			private function getFeatureids():String {
+				var temp1:String = "";
+				var temp2:String = "";
+				var temp3:Array = new Array();
+				for(var i:int = 0; i < featureids_arr.length; i++) {
+					temp1 = featureids_arr[0];
+					temp3 = temp1.split(":");
+					temp2 = temp2 + "," + temp3[1];
+				}
+				return temp2.slice(1, temp2.length);
+			}			
+    		// to handle click event of search button for a all the 3 modes
+    		private function search(val:int):void {
+    			var obj:Object = new Object();
+    			container.enabled = false;
+    			if(val == 0) { // simple search
+    				obj.action="searchByStr";
+    				obj.srchStr=search_inp.text;    				
+					useHttpService(basePath+dataFile, "GET", obj, showStrSearchRes, httpFaultHandler);
+    			} else if(val == 1) { // feature based search				
+					obj.action="searchByFeature";
+					obj.featureids=getFeatureids();
+					obj.searchDist=delta_inp.text;
+					obj.layers_list=getSelLayerList(0);
+					if(obj.layers_list == "") {    					
+						Alert.show("You must select atleast one layer");
+						container.enabled = true;					
+						return;
+					} 			
+    				useHttpService(basePath+dataFile, "GET", obj, showSearchRes, httpFaultHandler);
+    				ExternalInterface.call("changeDivWidth", 1);					
+    			} else if(val == 2) { // attribute based search   				    				
+					obj.action="searchByAttr";															
+					obj.whrClause=query_box.text;
+					obj.layers_list=getSelLayerList(1);
+					if(obj.layers_list == "") {    					
+						Alert.show("You must select atleast one layer");
+						container.enabled = true;					
+						return;
+					} 			
+    				useHttpService(basePath+dataFile, "GET", obj, showSearchRes, httpFaultHandler);
+    				ExternalInterface.call("changeDivWidth", 1);
+    			}
+    		}
+    		// returns the list of layer_tablename (seperated by comma) checked by user in the list box 
+    		private function getSelLayerList(val:int):String {
+    			var temp:String="";
+    			layersChecked = ExternalInterface.call("getLayersChecked");
+    			layersChecked_arr = layersChecked.split(",");
+    			if(val == 0) { // for feature based search 
+    				temp = layersChecked_arr[0];    				
+    				for(var i:int = 0; i < fb_layers_arr.length; i++) {
+    					if(fb_layers_arr[i].isSelected == true) {
+    						if(fb_layers_arr[i].data != layersChecked_arr[0])
+    							temp=temp+","+fb_layers_arr[i].data;
+    					}    					
+    				}
+    			} else {   // for attribute based search	
+    				for(var j:int = 0; j < ab_layers_arr.length; j++) {
+    					if(ab_layers_arr[j].isSelected == true) {
+    							temp=temp+","+ab_layers_arr[j].data;
+    					}
+    				}
+    				temp = temp.substring(1,temp.length);
+    			}
+    			return temp;
+    		}
+    		// to get the fids of corresponding layer_tablname for simple search
+    		public function getSearchIds(tablename:String):String {
+    			for(var i:int = 0; i < srch_table_ids.length; i++) {
+    				if (srch_table_ids[i].id == tablename)
+    					break;    					
+    			}
+    			return srch_table_ids[i].fids;
+    		}
+    		//called from javasscript code on the close event of search div.
+    		public function getchkdSrchLayersList():String { 
+    			//return a string as : layer_tablename#fid1,fid2;layer_tablename#fid1,fid2..
+    			var tmpStr:String = ""; 
+    			for(var i:int = 0; i < srch_table_ids.length; i++) {
+    				if (srch_table_ids[i].checked == true) 
+    					tmpStr = tmpStr + ";" + srch_table_ids[i].id + "#" + srch_table_ids[i].fids; 
+    			}
+    			return tmpStr.substring(1,tmpStr.length);
+    		}
+    		// shows the result of string search 
+    		private function showStrSearchRes(e:ResultEvent):void {
+    			var resp:Object = JSON.decode(e.result.toString());
+    			var key:String = "";
+    			strSrchResBx.removeAllChildren();
+    			//srch_table_ids.splice(0, srch_table_ids.length);
+    			for (key in resp) {
+    				var temp:Array = new Array();
+    				temp = resp[key].split(",");
+    				
+    				//create check boxes    				    				  				
+    				var chBx:CheckBox = new CheckBox();
+    				strSrchResBx.addChild(chBx);    				
+    				chBx.label = key+" ("+(temp.length-1).toString()+")";
+    				chBx.id = resp[key];
+    				chBx.addEventListener(Event.CHANGE,chBxlistener);
+    				
+    				// create obj and add to array for accessing from javascript    				
+    				var fids:String = "";
+    				for(var i:int = 1; i <temp.length; i++) {
+    					fids = fids + "," + temp[i];
+    				}
+    				var obj:Object = new Object();
+    				obj.id = temp[0];
+    				obj.fids = fids.substring(1,fids.length);
+    				obj.checked = false;
+    				srch_table_ids.push(obj);
+    			}
+    			container.enabled = true;
+    		}
+    		// for simple search - on click of check box it will call getData_Category function from javscript to load a particular layer
+    		private function chBxlistener(evt:Event):void {
+    			var temp:Array = new Array();
+    			temp = evt.target.id.split(",");
+    			var fids:String = "";
+    			for(var i:int = 1; i <temp.length; i++) {
+    				fids = fids + "," + temp[i];
+    			}    			
+				ExternalInterface.call("getData_Category", temp[0], evt.target.selected, fids.substring(1,fids.length));
+				// also change the corresponding checked value in the arr 
+				for(var j:int = 0; j < srch_table_ids.length; j++) {
+					if(srch_table_ids[j].id == temp[0]) {
+						srch_table_ids[j].checked = evt.target.selected;
+						break;
+					}
+				}
+    		}
+    		// to show search results for advanced search - call a popwindow to show the result
+    		private function showSearchRes(e:ResultEvent):void {
+    			var instance:SearchOutput = PopUpManager.createPopUp(this, SearchOutput, true) as SearchOutput;    											      		
+				PopUpManager.centerPopUp(instance);								      		    			    		
+				var resp:Object = JSON.decode(e.result.toString());
+				instance.showOutputResult(resp, container);	
+    		}
+    		// to get attributes of selected layers from the server     		
+    		private function getAttrs():void {
+    			add_attr.enabled = false;
+    			var obj:Object = new Object();
+				obj.action="getLayerAttr";
+				obj.layers_list=getSelLayerList(1);				
+				if(obj.layers_list == "") {    					
+					Alert.show("You must select atleast one layer");
+					add_attr.enabled = true;
+					return;
+				} 				
+				useHttpService(basePath+dataFile, "GET", obj, showAttrs, httpFaultHandler);
+    		}
+    		// clears the attribute list box
+    		private function clear_attr_lst():void {
+    			layer_attr_arr.splice(0, layer_attr_arr.length);
+    			layer_attr_lst.invalidateList();
+    			clear_attr.enabled = false;	
+    			add_attr.enabled = true;
+    			query_box.text="";
+    			query_val_inp.text = "";
+    		}
+    		// string lookup in an array
+    		private function findLabel(val:String):String {
+    			for(var i:int = 0; i < ab_layers_arr.length; i++) {
+    				if (ab_layers_arr[i].data == val)
+    					break;    					
+    			}
+    			return ab_layers_arr[i].label;
+    		}
+    		// called as ajax response to show the attribute of layers
+    		private function showAttrs(e:ResultEvent):void {
+    			var resp:Object = JSON.decode(e.result.toString());
+    			var attr_lst:Array = new Array();
+    			var attrs:String;
+    			for (var key:String in resp) {
+    				attrs = resp[key];
+    				attr_lst = attrs.split(",");
+    				for (var i:int = 0; i < attr_lst.length; i++) {
+    					var temp:String = attr_lst[i];    					
+    					var obj:Object = new Object();    					
+    					obj.label = findLabel(key)+":"+temp.substr(0,temp.length-2);//remove ; and 1/0 after it
+    					obj.data = temp.substr(0,temp.length-2);//remove ; and 1/0 after it
+    					obj.dtype = temp.charAt(temp.length-1); // get the last char    					    					
+    					layer_attr_arr.push(obj);		
+    				}
+      			}
+      			layer_attr_lst.dataProvider = layer_attr_arr;
+      			layer_attr_lst.invalidateList();
+      			clear_attr.enabled = true;
+    		}
+    		// enable/disable different button (operations) depending upon the datatype of selected attribute
+    		private function attr_clicked(rowIndx:int):void {
+    			var tablename_attr:String = layer_attr_arr[rowIndx].data;
+    			var dtype:String = layer_attr_arr[rowIndx].dtype;
+    			if (dtype == '1') { //means its a string datatype
+    				eqBT.enabled = true;
+    				neqBT.enabled = true;
+    				gtBT.enabled = false;
+    				ltBT.enabled = false;
+    				gteqBT.enabled  = false;
+    				lteqBT.enabled = false;    				
+    				query_box.text = query_box.text + "upper("+tablename_attr+")" + " ";
+    			}else {
+    				eqBT.enabled = true;
+    				neqBT.enabled = true;
+    				gtBT.enabled = true;
+    				ltBT.enabled = true;
+    				gteqBT.enabled  = true;
+    				lteqBT.enabled = true;    				
+    				query_box.text = query_box.text + tablename_attr + " "; 
+    			}    			    			
+    		}
+    		// called on click event of all the buttons (operation) in attribute based search
+    		private function setOper(oper:String):void {
+    			if (oper == "OK") {
+    				if(ltBT.enabled) //means the datatype of current attr is not a string
+    					query_box.text = query_box.text + query_val_inp.text + " ";    					
+    				else
+    					query_box.text = query_box.text + "upper('"+query_val_inp.text+"')" + " ";
+    					
+    			} else {
+    				query_box.text = query_box.text + oper + " ";
+    			}
+    		}
+    		// called on tab change event to set the dataproviders of list boxes
+    		private function tabChange():void {
+    			if(tn.selectedIndex == 0 )
+    				setDataProviders(0);
+    			else
+    				setDataProviders(1);    			
+    		}
+    		// called on selection of accordion to set the functionality of feature click on map
+    		// if simple search then click on feature will show the summary popup (default flow)
+    		// else click on feature will add the feature to the features list box
+    		private function accordionChange():void {
+    			if(accordion.selectedIndex == 0){
+					ExternalInterface.call("setFeatureClick", 0);    				
+    			} else {
+    				ExternalInterface.call("setFeatureClick", 1);
+    				if (tn != null)
+    					tabChange();
+    			}    			
+    		}
+    		
+		]]>
+	</mx:Script>
+	
+	<ns1:FABridge bridgeName="FAB_MultiLayerSearch"/>
+	
+	<mx:Panel width = '100%' height = '100%' title="Multi Layer Search" id="container">
+		<mx:Accordion id="accordion" width="100%" height="100%" change="accordionChange()">
+			
+			<mx:VBox id="sb_box" height="100%" width="100%" label="Simple Search">
+      			<mx:HBox width="100%" height="10%" paddingLeft="5" paddingRight="5" paddingTop="20" paddingBottom="20">
+      				<mx:Label text="Search String" width="20%" height="100%" fontSize="12" />
+      				<mx:TextInput id="search_inp" width="80%" height="100%" enter="search(0)" />      				
+	      		</mx:HBox>
+    	  		<mx:VBox height="90%" width="100%" verticalScrollPolicy="on" id="strSrchResBx" />
+      		</mx:VBox>    	
+    	
+    		<mx:VBox label="Advanced Search" height="100%" width="100%">
+    			<mx:TabNavigator id="tn" width = '100%' height = '100%' tabWidth="235" change="tabChange()">
+      				
+      				<mx:VBox label = 'Feature Based' width="100%" id="fb_box" creationComplete="setDataProviders(0)">
+        				<mx:Label text="Click on one or more Features on the map" fontSize="12" height="5%" width="100%" />
+        				<mx:HBox height="45%" width="100%" paddingLeft="5" paddingRight="5">
+        					<mx:List height="100%" width="75%" id="featureids_lst" dataProvider="{featureids_arr}" />
+        					<mx:VBox height="100%"  width="25%" paddingTop="30" paddingLeft="5">
+        						<mx:Button label="Remove" enabled="false" id="rmBut" click="removeFeature(0)"/>
+        						<mx:Button label="Remove All" enabled="false" id="rmAllBut" click="removeFeature(1)"/>
+        					</mx:VBox>
+        				</mx:HBox>													        				        		        			        		        				
+        				<mx:HBox width="100%" height="5%" paddingLeft="5" paddingRight="5" id="fb_hbx2">
+        					<mx:Label text="Select layers to search into:" fontSize="12" height="100%" width="70%"/>
+        					<mx:Label text="Delta Radius(metres):" fontSize="12" height="100%" width="20%"/>
+        					<mx:TextInput height="100%" width="10%" text="1" id="delta_inp" />        			
+						</mx:HBox>
+        				<mx:HBox width="100%" height="45%" paddingLeft="5" paddingBottom="5" paddingRight="5" id="fb_hbx3">
+        					<mx:List height="100%" width="50%" id="fb_layers_lst" horizontalScrollPolicy="on">
+        						<mx:itemRenderer>
+        						<mx:Component>
+        						<mx:CheckBox selectedField="isSelected" change="onChange(event);">
+        						<mx:Script>
+        							<![CDATA[        								
+        								private function onChange(evt:Event):void {        									
+        									data.isSelected = selected;
+        								}
+        							]]>
+        						</mx:Script>
+        						</mx:CheckBox>
+        						</mx:Component>
+        						</mx:itemRenderer>        			
+        					</mx:List>
+        					<mx:HBox width="50%" height="100%" paddingLeft="75" paddingTop="60" paddingRight="75" paddingBottom="60">
+        					<mx:Button label="Search" id="featureSearch" enabled="false" click="search(1)"/>
+        					</mx:HBox>
+        				</mx:HBox>        	 
+        			</mx:VBox>
+         
+        			<mx:VBox id="ab_box" label = 'Attribute Based' width="100%" creationComplete="setDataProviders(1)">
+        				<mx:HBox width="100%" height="5%" paddingLeft="5" paddingRight="5">
+        					<mx:Label text="Select layers:" fontSize="12" width="60%" height="100%"/>
+        					<mx:Label text="Select attributes:" fontSize="12" width="40%" height="100%"/>
+        				</mx:HBox>
+        				<mx:HBox width="100%" height="50%" paddingLeft="5" paddingRight="5">
+        					<mx:List height="100%" width="45%" id="ab_layers_lst" horizontalScrollPolicy="on" >
+        						<mx:itemRenderer>
+        						<mx:Component>
+        						<mx:CheckBox selectedField="isSelected" change="onChange(event);">
+        						<mx:Script>
+        							<![CDATA[        								
+        								private function onChange(evt:Event):void {        									
+        									data.isSelected = selected;
+        								}
+        							]]>
+        						</mx:Script>
+        						</mx:CheckBox>
+        						</mx:Component>
+        						</mx:itemRenderer>               			
+        					</mx:List>
+        					<mx:VBox height="100%" width="5%" paddingTop="40" paddingBottom="40">
+        						<mx:Button label="Add" id="add_attr" click="getAttrs()"/>
+        						<mx:Button label="Clear" id="clear_attr" click="clear_attr_lst()" enabled="false"/>
+        					</mx:VBox>
+        					<mx:List height="100%" width="50%" id="layer_attr_lst" allowMultipleSelection="false" horizontalScrollPolicy="on" itemDoubleClick="attr_clicked(event.rowIndex)" doubleClickEnabled="true" />        					
+        				</mx:HBox>
+        				<mx:HBox width="100%" height="10%" paddingLeft="5" paddingRight="5">
+        					<mx:HBox width="70%" height="100%">
+        						<mx:Button id="eqBT" label="=" click="setOper('=')" enabled="false"/>
+        						<mx:Button id="neqBT" label="&lt;&gt;" click="setOper('&lt;&gt;')" enabled="false"/>
+        						<mx:Button id="gtBT" label="&gt;" click="setOper('&gt;')" enabled="false"/>
+        						<mx:Button id="ltBT" label="&lt;" click="setOper('&lt;')" enabled="false"/>
+        						<mx:Button id="gteqBT" label="&gt;=" click="setOper('&gt;=')" enabled="false"/>
+        						<mx:Button id="lteqBT" label="&lt;=" click="setOper('&lt;=')" enabled="false"/>
+        					</mx:HBox>
+        					<mx:Label text="Value:" fontSize="12" width="10%" height="100%"/>
+        					<mx:TextInput width="20%" height="100%" id="query_val_inp"/>
+        				</mx:HBox>
+        				<mx:HBox width="100%" height="10%" paddingLeft="5" paddingRight="5">
+        					<mx:Button id="andBT" label="AND" click="setOper('AND')"/>
+        					<mx:Button id="orBT" label="OR" click="setOper('OR')"/>
+        					<mx:HDividedBox width="100%" />        					
+        					<mx:Button label="OK" click="setOper('OK')"/>
+        				</mx:HBox>
+        				<mx:HBox width="100%" height="25%" paddingLeft="5" paddingRight="5" paddingBottom="5">
+        					<mx:TextArea text="" id="query_box" width="70%" height="100%" wordWrap="true" editable="true" fontSize="12"/>
+        					<mx:HBox width="30%" height="100%" paddingTop="25" paddingLeft="30">
+        						<mx:Button label="Search" click="search(2)"/>
+        					</mx:HBox>
+        				</mx:HBox>
+        			</mx:VBox>
+        			        
+      			</mx:TabNavigator>
+            	<!--
+      			<mx:VBox width="100%" height="20%" paddingLeft="5" paddingRight="5" enabled="false">
+      				<mx:Label text="Other Options"/>
+      				<mx:HBox width="100%">
+	        			<mx:CheckBox label="Point Layer" height="17" selected="true"/>
+    	    			<mx:CheckBox label="Polygon Layer" height="17" selected="true"/>
+        				<mx:CheckBox label="Line Layer" height="17" selected="true"/>
+      				</mx:HBox>
+      				<mx:CheckBox label="Show O/P Synchronously (creates a link table in DB if unselected)" selected="true" />
+      			</mx:VBox>
+      			-->
+      		</mx:VBox>
+			
+		</mx:Accordion>
+	</mx:Panel>    
+
+</mx:Application>

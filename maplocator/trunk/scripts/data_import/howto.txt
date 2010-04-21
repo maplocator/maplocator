@@ -1,0 +1,25 @@
+run "python import_resourcetables.py DBNAME DBUSER PATH-TO-RESOURCETABLES-INFO > rt.bat"
+Open "rt.bat". Search for "error". If none reported go ahead.
+For Windows:
+ run "rt.bat > rt.log"
+For Linux:
+ run [grep "psql" rt.bat > rt.sh]
+ edit rt.sh. Add "#!/bin/bash" as first line.
+ "chmod +x rt.sh"
+ "./rt.sh > rt.log"
+go to "rlogs"
+run [grep -ilr "error" *]
+If no file is listed, move on.
+go to import folder.
+"python import_layers.py DBNAME DBUSER PATH-TO-LAYERTABLES-INFO > il.bat"
+Open "rt.bat". Search for "error". If none reported go ahead.
+For Windows:
+ run "il.bat > il.log"
+For Linux:
+ run [grep "psql" il.bat > il.sh]
+ edit il.sh. Add "#!/bin/bash" as first line.
+ "chmod +x il.sh"
+ "./il.sh > il.log"
+go to "logs"
+run [grep -ilr "error" *]
+If no file is listed, the import is complete.
